@@ -1,0 +1,89 @@
+//
+// Created by Matan on 18/12/2018.
+//
+
+#include "parser.h"
+# define SKIP_STRING 1
+void Parser::initializeCommandMap(DataHandler* d_h) {
+  Command* command = new DefineVarCommand(d_h);
+  this->command_map["var"] = command;
+  this->delete_vector.push_back(command);
+  command =new EqualCommand(d_h);
+  this->command_map["="] =command ;
+  this->delete_vector.push_back(command);
+  command = new PrintCommand(d_h);
+  this->command_map["print"] = command;
+  this->delete_vector.push_back(command);
+  command = new SleepCommand(d_h);
+  this->command_map["sleep"] = command;
+  this->delete_vector.push_back(command);
+  this->command_map["if"] = nullptr;
+  this->command_map["while"] = nullptr;
+}
+
+ConditionParser * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,string condition) {
+  string token;
+  ConditionParser* condition_command;
+  if(condition == "if") {
+    condition_command = new IfCommand(d_h);
+  } else {
+    condition_command = new LoopCommand(d_h);
+  }
+  do{
+    // get next lexer symbol
+    i++;
+    token = d_h->getSymbolString(i);
+    if(this->command_map.count(token)) {
+      if(token == "if") {
+        condition_command->addCommand(initializeConditionCommand(d_h,i,"if"));
+      } else if(token == "while") {
+        condition_command->addCommand(initializeConditionCommand(d_h,i,"while"));
+      }else {
+        condition_command->addCommand(this->command_map[token]);
+      }
+    }
+  }while (token != "}");
+  condition_command->setSkipCondition(i + d_h->getCurrIndex() + SKIP_STRING);
+  this->delete_vector.push_back(condition_command);
+  return condition_command;
+}
+
+void Parser::setConditionCommand(DataHandler *d_h ,string& condition_command) {
+  int index =0;
+  if(condition_command == "if") {
+    this->command_map["if"] = this->initializeConditionCommand(d_h, index ,"if");
+  } else {
+    this->command_map["while"] = this->initializeConditionCommand(d_h,index,"while");
+  }
+}
+void Parser::run() {
+  auto * d_h = new DataHandler(this->string_command,&curr_index);
+  this->initializeCommandMap(d_h);
+  while(true) {
+    if(d_h->isSymbol(string_command[curr_index])) {
+      curr_index++;
+    }
+    string command =string_command[curr_index];
+    if(command_map.count(command)){
+      if(command =="if" || command == "while") {
+        this->setConditionCommand(d_h ,command);
+      }
+      command_map[command]->doCommand();
+    } else {
+      throw "invalid command";
+    }
+    if(curr_index >= string_command.size()-1) {
+      break;
+    }
+  }
+  this->deleteCommands();
+  delete d_h;
+}
+
+void Parser::deleteCommands() {
+  for(auto c: this->delete_vector) {
+    delete (c);
+  }
+}
+
+
