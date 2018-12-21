@@ -225,3 +225,4 @@ void DataHandler::printString() {
   cout<< to_print<<endl;
   this->increaseCurrIndex(i);
 }
+
