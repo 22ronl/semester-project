@@ -5,18 +5,18 @@
 #include "parser.h"
 # define SKIP_STRING 1
 void Parser::initializeCommandMap(DataHandler* d_h) {
-  Expression* command_expression = new CommandExpression (new DefineVarCommand(d_h));
+  auto command_expression = new CommandExpression (new DefineVarCommand(d_h));
   this->command_map["var"] = command_expression;
-  //this->delete_vector.push_back(command);
+  this->delete_vector.push_back(command_expression);
   command_expression =new CommandExpression (new EqualCommand(d_h));
   this->command_map["="] =command_expression ;
-  //this->delete_vector.push_back(command);
+  this->delete_vector.push_back(command_expression);
   command_expression = new CommandExpression(new PrintCommand(d_h));
   this->command_map["print"] = command_expression;
-  //this->delete_vector.push_back(command);
+  this->delete_vector.push_back(command_expression);
   command_expression = new CommandExpression (new SleepCommand(d_h));
   this->command_map["sleep"] = command_expression;
-  //this->delete_vector.push_back(command);
+  this->delete_vector.push_back(command_expression);
   this->command_map["if"] = nullptr;
   this->command_map["while"] = nullptr;
 }
@@ -24,6 +24,7 @@ void Parser::initializeCommandMap(DataHandler* d_h) {
 Expression * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,string condition) {
   string token;
   ConditionParser* condition_command;
+  CommandExpression * command_expression;
   if(condition == "if") {
     condition_command = new IfCommand(d_h);
   } else {
@@ -44,8 +45,9 @@ Expression * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,strin
     }
   }while (token != "}");
   condition_command->setSkipCondition(i + d_h->getCurrIndex() + SKIP_STRING);
-  //this->delete_vector.push_back(condition_command);
-  return new CommandExpression(condition_command);
+  command_expression = new CommandExpression(condition_command);
+  this->delete_vector.push_back(command_expression);
+  return command_expression;
 }
 
 void Parser::setConditionCommand(DataHandler *d_h ,string& condition_command) {
@@ -76,7 +78,7 @@ void Parser::run() {
       break;
     }
   }
-  //this->deleteCommands();
+  this->deleteCommands();
   delete d_h;
 }
 

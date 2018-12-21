@@ -16,7 +16,7 @@ class Parser {
  private:
   int curr_index=0;
   vector<string> string_command;
-  vector<Command*> delete_vector;
+  vector<CommandExpression*> delete_vector;
   unordered_map<string,Expression *> command_map;
 
  public:

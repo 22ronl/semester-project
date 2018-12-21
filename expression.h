@@ -22,8 +22,6 @@ class Number :public Expression {
  private:
   double value;
  public:
-  //Expression* getLeftExp(){ return nullptr;}
-  //Expression* getRightExp(){ return nullptr;}
   Number(double num);
   double calculate();
 };
@@ -75,9 +73,12 @@ class CommandExpression : public Expression {
     Command * command;
  public:
     CommandExpression(Command * command1) {this->command = command1;}
+    ~CommandExpression() {delete command;}
+    // copy constructor
+    CommandExpression(const CommandExpression& c_e): command(c_e.command) {};
+    CommandExpression& operator=(const CommandExpression& other);
     double calculate();
-    //Expression* getLeftExp(){ return nullptr;}
-    //Expression* getRightExp(){ return nullptr;}
+
 
 };
 #endif //EXPRESSION_H

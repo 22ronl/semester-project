@@ -182,6 +182,10 @@ double CommandExpression::calculate() {
 }
 
 
-
-
+CommandExpression& CommandExpression::operator=(const CommandExpression &other) {
+  if(this != &other) {
+    this->command = other.command;
+  }
+  return *this;
+}
 
