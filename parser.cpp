@@ -5,23 +5,23 @@
 #include "parser.h"
 # define SKIP_STRING 1
 void Parser::initializeCommandMap(DataHandler* d_h) {
-  Command* command = new DefineVarCommand(d_h);
-  this->command_map["var"] = command;
-  this->delete_vector.push_back(command);
-  command =new EqualCommand(d_h);
-  this->command_map["="] =command ;
-  this->delete_vector.push_back(command);
-  command = new PrintCommand(d_h);
-  this->command_map["print"] = command;
-  this->delete_vector.push_back(command);
-  command = new SleepCommand(d_h);
-  this->command_map["sleep"] = command;
-  this->delete_vector.push_back(command);
+  Expression* command_expression = new CommandExpression (new DefineVarCommand(d_h));
+  this->command_map["var"] = command_expression;
+  //this->delete_vector.push_back(command);
+  command_expression =new CommandExpression (new EqualCommand(d_h));
+  this->command_map["="] =command_expression ;
+  //this->delete_vector.push_back(command);
+  command_expression = new CommandExpression(new PrintCommand(d_h));
+  this->command_map["print"] = command_expression;
+  //this->delete_vector.push_back(command);
+  command_expression = new CommandExpression (new SleepCommand(d_h));
+  this->command_map["sleep"] = command_expression;
+  //this->delete_vector.push_back(command);
   this->command_map["if"] = nullptr;
   this->command_map["while"] = nullptr;
 }
 
-ConditionParser * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,string condition) {
+Expression * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,string condition) {
   string token;
   ConditionParser* condition_command;
   if(condition == "if") {
@@ -44,8 +44,8 @@ ConditionParser * Parser::initializeConditionCommand(DataHandler *d_h , int& i ,
     }
   }while (token != "}");
   condition_command->setSkipCondition(i + d_h->getCurrIndex() + SKIP_STRING);
-  this->delete_vector.push_back(condition_command);
-  return condition_command;
+  //this->delete_vector.push_back(condition_command);
+  return new CommandExpression(condition_command);
 }
 
 void Parser::setConditionCommand(DataHandler *d_h ,string& condition_command) {
@@ -68,7 +68,7 @@ void Parser::run() {
       if(command =="if" || command == "while") {
         this->setConditionCommand(d_h ,command);
       }
-      command_map[command]->doCommand();
+      command_map[command]->calculate();
     } else {
       throw "invalid command";
     }
@@ -76,7 +76,7 @@ void Parser::run() {
       break;
     }
   }
-  this->deleteCommands();
+  //this->deleteCommands();
   delete d_h;
 }
 

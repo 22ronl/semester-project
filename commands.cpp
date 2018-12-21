@@ -55,8 +55,8 @@ bool ConditionParser::checkCondition(int condition_place) {
   return result;
 }
 
-void ConditionParser::addCommand(Command *command) {
-  this->list_command.push_back(command);
+void ConditionParser::addCommand(Expression *command_expression) {
+  this->list_command.push_back(command_expression);
 }
 void ConditionParser::setSkipCondition(int value) {
   this->skip_condition = value;
@@ -71,7 +71,7 @@ void IfCommand::doCommand() {
       if (data_Handler->isSymbol(curr_symbol)) {
         this->data_Handler->increaseCurrIndex(NEXT_STRING_POS);
       }
-      c->doCommand();
+      c->calculate();
     }
     this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
   } else {
@@ -89,7 +89,7 @@ void LoopCommand::doCommand() {
       if (data_Handler->isSymbol(curr_symbol)) {
         this->data_Handler->increaseCurrIndex(NEXT_STRING_POS);
       }
-      c->doCommand();
+      c->calculate();
     }
 
     this->data_Handler->setCurrIndex(loop_index);

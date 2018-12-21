@@ -8,22 +8,22 @@ using namespace std;
 #include <vector>
 #include <queue>
 #include <map>
+
+
+
+
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-class Expression {
- public:
-  virtual double calculate()=0;
-  virtual Expression* getLeftExp()=0;
-  virtual Expression* getRightExp()=0;
-  virtual ~Expression(){};
-};
+
+
+#include "command_expression.h"
 
 class Number :public Expression {
  private:
   double value;
  public:
-  Expression* getLeftExp(){ return nullptr;}
-  Expression* getRightExp(){ return nullptr;}
+  //Expression* getLeftExp(){ return nullptr;}
+  //Expression* getRightExp(){ return nullptr;}
   Number(double num);
   double calculate();
 };
@@ -69,4 +69,15 @@ stack<string> infixToPostfix(vector<string>& tokens);
 Expression *createExpression(stack<string>& postfix);
 void deleteExpression(Expression * e);
 
+
+class CommandExpression : public Expression {
+ private:
+    Command * command;
+ public:
+    CommandExpression(Command * command1) {this->command = command1;}
+    double calculate();
+    //Expression* getLeftExp(){ return nullptr;}
+    //Expression* getRightExp(){ return nullptr;}
+
+};
 #endif //EXPRESSION_H

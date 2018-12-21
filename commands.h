@@ -6,15 +6,8 @@
 #define COMMANDS_H
 #include "maps.h"
 #include <list>
-class Command {
- protected:
-  DataHandler* data_Handler;
-
- public:
-  Command(DataHandler* data_handler1){this->data_Handler = data_handler1;}
-  virtual void doCommand() =0;
-  virtual ~Command(){};
-};
+#include "expression.h"
+#include "command_expression.h"
 
 class DefineVarCommand : public Command {
  public:
@@ -42,12 +35,12 @@ class SleepCommand : public Command {
 
 class ConditionParser : public Command {
  protected:
- list<Command*> list_command;
+ list<Expression*> list_command;
  int skip_condition;
 
  public:
   ConditionParser(DataHandler* data_handler1) : Command(data_handler1){};
-  void addCommand(Command * command);
+  void addCommand(Expression* command_expression);
   bool checkCondition(int condition_place);
   void doCommand()=0;
   void setSkipCondition(int value);

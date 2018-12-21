@@ -176,6 +176,11 @@ void deleteExpression(Expression * e) {
 }
 
 
+double CommandExpression::calculate() {
+  this->command->doCommand();
+  return 0;
+}
+
 
 
 
