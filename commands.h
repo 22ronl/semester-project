@@ -60,4 +60,11 @@ class LoopCommand : public ConditionParser {
   void doCommand();
 };
 
+class OpenDataServer : public Command {
+ public:
+  OpenDataServer(DataHandler* data_handler1) : Command(data_handler1){};
+  void doCommand();
+};
+
+
 #endif //

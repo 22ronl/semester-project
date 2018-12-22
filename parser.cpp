@@ -17,6 +17,9 @@ void Parser::initializeCommandMap(DataHandler* d_h) {
   command_expression = new CommandExpression (new SleepCommand(d_h));
   this->command_map["sleep"] = command_expression;
   this->delete_vector.push_back(command_expression);
+  command_expression = new CommandExpression(new OpenDataServer(d_h));
+  this->command_map["openDataServer"]= command_expression;
+  this->delete_vector.push_back(command_expression);
   this->command_map["if"] = nullptr;
   this->command_map["while"] = nullptr;
 }
