@@ -48,8 +48,9 @@ bool isValidVar(string& var) {
 }
 
 bool isSystemName(string& symbol) {
-  map<string,int> system_names{{"var",1}};
-  return system_names.count(symbol);
+  map<string,int> system_names{{"var",1} ,{"print",1},{"sleep",1}
+  ,{"if",1},{"while",1},{"connect",1},{"openDataServer",1}};
+  return (bool) system_names.count(symbol);
 }
 
 void DataHandler::addSymbol(string symbol){
