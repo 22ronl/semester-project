@@ -8,6 +8,7 @@
 #define NEXT_STRING 1
 #define SECOND_CHAR 1
 #define ONE_CHAR 1
+#define ONE_DOT 1
 #include "expression.h"
 #include <map>
 #include <iostream>
@@ -94,12 +95,22 @@ double DataHandler::getSymbolValue(string &symbol) {
   }
   return this->symbol_table[symbol];
 }
+
+bool isDot (char& c , int& num_of_dots) {
+  if(c == '.') {
+    num_of_dots++;
+    return true;
+  } else {
+    return false;
+  }
+}
 // because expression can be one liner
 bool DataHandler:: addExpressionTokens(string& string1,vector<string>& tokens) {
   string temp_num;
   string temp_name;
   string op;
   int i=0;
+  int num_of_dots =0;
   bool is_negative = false;
   bool last_is_operator= false;
   double value;
@@ -116,7 +127,10 @@ bool DataHandler:: addExpressionTokens(string& string1,vector<string>& tokens) {
       do {
         temp_num += string1[i];
         i++;
-      }while(isDigit(string1[i]) || string1[i] =='.');
+      }while(isDigit(string1[i]) || isDot(string1[i],num_of_dots));
+      if(num_of_dots > ONE_DOT) {
+        throw "invalid number";
+      }
       if(is_negative) {
         temp_num = "-" + temp_num;
         is_negative = false;

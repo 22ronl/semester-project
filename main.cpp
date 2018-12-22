@@ -18,7 +18,11 @@ int main() {
   //lex.print_vector();
   vector<string> string_command =lex.get_string_command();
   Parser p(string_command);
-  p.run();
+  try {
+    p.run();
+  } catch (...) {
+    cout<< "falid"<<endl;
+  }
   //Expression* e= new Plus(new Number(3) , new Mul( new Div(new Number(4), new
     //  Number(2)) , new Number(5)));
   //Expression *e2 = new Min(e,new Number(7));
