@@ -120,6 +120,26 @@ void SleepCommand::doCommand() {
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
 
+struct Params {
+  DataHandler * d_h;
+  char * buffer;
+  int newsockfd;
+};
+
+void* threadGetPlaneData(void* arg) {
+  struct Params * params = (struct Params*) arg;
+  int n;
+  //while (true) {
+   // bzero(params->buffer,256);
+   // n = read(params->newsockfd,params->buffer,255 );
+    //if (n < 0) {
+    //  perror("ERROR reading from socket");
+    //  exit(1);
+    //}
+  //}
+  cout<<"socker number " + params->newsockfd;
+}
+
 void OpenDataServer::doCommand() {
   int sockfd, newsockfd, portno, clilen;
   char buffer[256];
@@ -157,15 +177,19 @@ void OpenDataServer::doCommand() {
   /* Accept actual connection from the client */
   newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, (socklen_t*)&clilen);
 
-  if (newsockfd < 0) {
-    perror("ERROR on accept");
-    exit(1);
-  }
+  //if (newsockfd < 0) {
+   // perror("ERROR on accept");
+   // exit(1);
+  //}
 
   /* If connection is established then start communicating */
-  bzero(buffer,256);
-  n = read( newsockfd,buffer,255 );
+  //bzero(buffer,256);
+  //n = read( newsockfd,buffer,255 );
 
+  struct Params* thread_params = new Params();
+  pthread_t t1;
+  DataHandler * d_h = this->data_Handler;
+  pthread_create(&t1, nullptr,threadGetPlaneData,thread_params);
   if (n < 0) {
     perror("ERROR reading from socket");
     exit(1);
@@ -173,13 +197,6 @@ void OpenDataServer::doCommand() {
 
   printf("Here is the message: %s\n",buffer);
 
-  /* Write a response to the client */
-  n = write(newsockfd,"I got your message",18);
-
-  if (n < 0) {
-    perror("ERROR writing to socket");
-    exit(1);
-  }
   // will need to deal with writing every ten seconds
   this->data_Handler->getExpressionValue();
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
