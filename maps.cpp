@@ -246,3 +246,13 @@ void DataHandler::printString() {
   this->increaseCurrIndex(i);
 }
 
+void DataHandler::updatePlaneData(string path, double value) {
+  this->plane_data[path] = value;
+}
+
+void DataHandler::printPlane() {
+  for(auto& x : this->plane_data) {
+    cout<< x.second << " |";
+  }
+  cout << endl;
+}

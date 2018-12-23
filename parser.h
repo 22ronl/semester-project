@@ -27,6 +27,7 @@ class Parser {
   void setConditionCommand(DataHandler* d_h ,string& condition_command);
   void deleteCommands();
 
+
 };
 
 #endif //PARSER_H

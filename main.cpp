@@ -1,13 +1,19 @@
 #include <iostream>
 #include "utils.h"
-#include "expression.h"
 #include "parser.h"
-#include "maps.h"
-
+//void dataParser(vector<string>& result , char* buffer_index);
+//void updateData(char * buffer , DataHandler * d_h);
 int main() {
+  //char buffer[] ="0.0000,1.00000,3.00000\n";
+  //vector<string> result;
+  //dataParser(result ,buffer);
+  //int x =5;
+  //vector<string> kkaka {"kaka"};
+  //DataHandler * d_h = new DataHandler(kkaka, &x);
+  //updateData(buffer,d_h);
  // vector<string> tokens;
-  string s = "-5.3+-3.98";
-  //DataHandler d()
+  //string s = "-5.3+-3.98";
+  //DataHandler d();
   //cout <<addExpressionTokens(s,tokens);
   Lexer lex("example.txt");
   //vector<string> tokens = lex.get_string_command();
@@ -38,5 +44,8 @@ int main() {
     //cout<<result.front();
     //result.pop();
   //}
+    //pthread_exit(NULL);
   return 0;
 }
+
+

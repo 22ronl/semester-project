@@ -13,12 +13,16 @@
 #include <sys/socket.h>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
+#include <pthread.h>
 #define NEXT_STRING_POS 1
 #define NEXT_COMMAND_POS 2
 #define NEXT_COMMAND_POS_1 1
 #define VAR_POS -1
 #define FIRST_CONDITION_COMMAND_INDEX 2
 #define CURR_SYMBOL_INDEX 0
+#define BUFFER_SIZE 1024
+#define UNIX_END_OF_LINE '\n'
 void DefineVarCommand::doCommand() {
   string var = this->data_Handler->getSymbolString(NEXT_STRING_POS);
   this->data_Handler->addSymbol(var);
@@ -120,29 +124,54 @@ void SleepCommand::doCommand() {
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
 
-struct Params {
-  DataHandler * d_h;
-  char * buffer;
-  int newsockfd;
-};
+void dataParser(vector<string>& result , char* buffer_index) {
+  string var_value;
+  while(true) {
+    while(*buffer_index != ',' )  {
+       if(*buffer_index == UNIX_END_OF_LINE) {
+            break;
+       }
+      var_value += *buffer_index;
+      buffer_index++;
+    }
+    result.push_back(var_value);
+    var_value.clear();
+      if(*buffer_index == UNIX_END_OF_LINE) {
+          break;
+      }
+    buffer_index++;
+  }
+}
+void updateData(char * buffer , DataHandler * d_h) {
+  vector<string> plane_data;
+  dataParser(plane_data ,buffer);
+  for(int i =0 ; i< plane_data.size();i++) {
+    d_h->updatePlaneData(d_h->plane_data_list[i]
+            ,stof(plane_data[i]));
+  }
+}
 
-void* threadGetPlaneData(void* arg) {
-  struct Params * params = (struct Params*) arg;
+void* ThreadGetPlaneData(void *param) {
+  auto params = (struct Params*) param;
   int n;
-  //while (true) {
-   // bzero(params->buffer,256);
-   // n = read(params->newsockfd,params->buffer,255 );
-    //if (n < 0) {
-    //  perror("ERROR reading from socket");
-    //  exit(1);
-    //}
-  //}
-  cout<<"socker number " + params->newsockfd;
+  char buffer[BUFFER_SIZE];
+  while (params->d_h->reading_data) {
+
+      bzero(buffer, BUFFER_SIZE);
+      read(params->newsockfd, buffer, BUFFER_SIZE-1);
+      if (n < 0) {
+        perror("ERROR reading from socket");
+       exit(1);
+      }
+      updateData(buffer,params->d_h);
+
+  }
+
 }
 
 void OpenDataServer::doCommand() {
   int sockfd, newsockfd, portno, clilen;
-  char buffer[256];
+  char buffer[BUFFER_SIZE];
   struct sockaddr_in serv_addr, cli_addr;
   int  n;
 
@@ -176,26 +205,28 @@ void OpenDataServer::doCommand() {
 
   /* Accept actual connection from the client */
   newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, (socklen_t*)&clilen);
-
-  //if (newsockfd < 0) {
-   // perror("ERROR on accept");
-   // exit(1);
-  //}
-
-  /* If connection is established then start communicating */
-  //bzero(buffer,256);
-  //n = read( newsockfd,buffer,255 );
-
-  struct Params* thread_params = new Params();
-  pthread_t t1;
-  DataHandler * d_h = this->data_Handler;
-  pthread_create(&t1, nullptr,threadGetPlaneData,thread_params);
-  if (n < 0) {
-    perror("ERROR reading from socket");
+  if (newsockfd < 0) {
+    perror("ERROR on accept");
     exit(1);
   }
 
-  printf("Here is the message: %s\n",buffer);
+  /* If connection is established then start communicating */
+  //bzero(buffer,256);
+  //n = read( newsockfd,buffer,BUFFER_SIZE-1 );
+   // printf("Here is the message: %s\n",buffer);
+  DataHandler * d_h = this->data_Handler;
+
+  thread_params.newsockfd = newsockfd;
+  thread_params.d_h = d_h;
+  pthread_t t1;
+
+  pthread_create(&t1, nullptr,ThreadGetPlaneData,(void*)&thread_params);
+  //if (n < 0) {
+   // perror("ERROR reading from socket");
+    //exit(1);
+  //}
+
+  //
 
   // will need to deal with writing every ten seconds
   this->data_Handler->getExpressionValue();

@@ -13,7 +13,9 @@ class DataHandler {
   unordered_map<string,double> symbol_table;
   vector<string> string_command;
   unordered_map<string,double> plane_data;
+
  public:
+  bool reading_data= true;
   DataHandler(vector<string>& string_command1 ,int* curr_index);
   string getSymbolString(int parm_num);
   void addSymbol(string symbol);
@@ -28,6 +30,32 @@ class DataHandler {
   void increaseCurrIndex(int index);
   bool toPrintString();
   void printString();
+  void updatePlaneData(string path , double value);
+  ~DataHandler(){reading_data = false;}
+  void printPlane();
+  std::vector<std::string> plane_data_list{"/instrumentation/airspeed-indicator/indicated-speed-kt",
+                                             "/instrumentation/altimeter/indicated-altitude-ft",
+                                             "/instrumentation/altimeter/pressure-alt-ft",
+                                             "/instrumentation/attitude-indicator/indicated-pitch-deg",
+                                             "/instrumentation/attitude-indicator/indicated-roll-deg",
+                                             "/instrumentation/attitude-indicator/internal-pitch-deg",
+                                             "/instrumentation/attitude-indicator/internal-roll-deg",
+                                             "/instrumentation/encoder/indicated-altitude-ft",
+                                             "/instrumentation/encoder/pressure-alt-ft",
+                                             "/instrumentation/gps/indicated-altitude-ft",
+                                             "/instrumentation/gps/indicated-ground-speed-kt",
+                                             "/instrumentation/gps/indicated-vertical-speed",
+                                             "/instrumentation/heading-indicator/indicated-heading-deg",
+                                             "/instrumentation/magnetic-compass/indicated-heading-deg",
+                                             "/instrumentation/slip-skid-ball/indicated-slip-skid",
+                                             "/instrumentation/turn-indicator/indicated-turn-rate",
+                                             "/instrumentation/vertical-speed-indicator/indicated-speed-fpm",
+                                             "/controls/flight/aileron",
+                                             "/controls/flight/elevator",
+                                             "/controls/flight/rudder",
+                                             "/controls/flight/flaps",
+                                             "/controls/engines/engine/throttle",
+                                             "/engines/engine/rpm"};
 };
 
 #endif //SEMSTER_PROJECT_MAPS_H

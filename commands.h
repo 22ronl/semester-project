@@ -8,6 +8,7 @@
 #include <list>
 #include "expression.h"
 #include "command_expression.h"
+#include "plane_data.h"
 
 class DefineVarCommand : public Command {
  public:
@@ -60,7 +61,13 @@ class LoopCommand : public ConditionParser {
   void doCommand();
 };
 
+struct Params {
+    DataHandler * d_h;
+    int newsockfd;
+};
 class OpenDataServer : public Command {
+private:
+    struct Params thread_params;
  public:
   OpenDataServer(DataHandler* data_handler1) : Command(data_handler1){};
   void doCommand();
