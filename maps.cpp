@@ -12,6 +12,7 @@
 #include "expression.h"
 #include <map>
 #include <iostream>
+#include "plane_data.h"
 using namespace std;
 
 using namespace std;
@@ -65,6 +66,10 @@ void DataHandler::addSymbol(string symbol){
 DataHandler::DataHandler(vector<string> &string_command1, int *curr_index) {
   this->string_command =string_command1;
   this->curr_index =curr_index;
+  for(string s : plane_data_list) {
+    this->plane_data[s] = 0.0;
+  }
+
 
 }
 

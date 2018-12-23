@@ -12,6 +12,7 @@ class DataHandler {
   int* curr_index;
   unordered_map<string,double> symbol_table;
   vector<string> string_command;
+  unordered_map<string,double> plane_data;
  public:
   DataHandler(vector<string>& string_command1 ,int* curr_index);
   string getSymbolString(int parm_num);
