@@ -38,11 +38,18 @@ void EqualCommand::doCommand() {
     string path_or_var =  this->data_Handler->getSymbolString(PATH_INDEX);
     //check if var already exist.
     if(this->data_Handler->isPath(path_or_var)) {
+      path_or_var = path_or_var.substr(1, path_or_var.length()-2);
       this->data_Handler->addPathToTable(var,path_or_var);
-      this->data_Handler->setVarPathValue(var);
+      if(this->data_Handler->plane_data.count(path_or_var)) {
+        this->data_Handler->setVarPathValue(var);
+      }
     } else {
-      this->data_Handler->addPathToTable(var,data_Handler->getVarPath(var));
-      this->data_Handler->setVarPathValue(var);
+      this->data_Handler->addPathToTable(var,data_Handler->getVarPath(path_or_var));
+      if(this->data_Handler->plane_data.count(data_Handler->getVarPath(path_or_var))) {
+        this->data_Handler->setVarPathValue(var);
+      } else {
+        this->data_Handler->setSymbolValue(var,data_Handler->getSymbolValue(path_or_var));
+      }
     }
   }else {
     val = this->data_Handler->getExpressionValue();
