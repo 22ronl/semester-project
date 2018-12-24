@@ -13,7 +13,7 @@ class DataHandler {
   unordered_map<string,double> symbol_table;
   vector<string> string_command;
   unordered_map<string,double> plane_data;
-
+  int client_socket;
  public:
   bool reading_data= true;
   DataHandler(vector<string>& string_command1 ,int* curr_index);
@@ -33,6 +33,8 @@ class DataHandler {
   void updatePlaneData(string path , double value);
   ~DataHandler(){reading_data = false;}
   void printPlane();
+  int getClientSocket(){ return client_socket;}
+  void setClientSocket(int client_socket){this->client_socket = client_socket;}
   std::vector<std::string> plane_data_list{"/instrumentation/airspeed-indicator/indicated-speed-kt",
                                              "/instrumentation/altimeter/indicated-altitude-ft",
                                              "/instrumentation/altimeter/pressure-alt-ft",

@@ -233,3 +233,44 @@ void OpenDataServer::doCommand() {
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 
 }
+
+void Connect::doCommand() {
+  int sockfd, portno;
+  struct sockaddr_in serv_addr;
+  struct hostent *server;
+
+  std::string ip = this->data_Handler->getSymbolString(NEXT_COMMAND_POS_1);
+  this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
+  portno  = (int) this->data_Handler->getExpressionValue();
+
+
+  /* Create a socket point */
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+  if (sockfd < 0) {
+    perror("ERROR opening socket");
+    exit(1);
+  }
+  char* write_able = new char[ip.size()+ 1];
+  std::copy(ip.begin(), ip.end(), write_able);
+  write_able[ip.size()] = '\0';
+  server = gethostbyname(write_able);
+
+  if (server == NULL) {
+    fprintf(stderr,"ERROR, no such host\n");
+    exit(0);
+  }
+
+  bzero((char *) &serv_addr, sizeof(serv_addr));
+  serv_addr.sin_family = AF_INET;
+  bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+  serv_addr.sin_port = htons(portno);
+
+  /* Now connect to the server */
+  if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+    perror("ERROR connecting");
+    exit(1);
+  }
+  this->data_Handler->setClientSocket(sockfd);
+  this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
+}

@@ -61,6 +61,12 @@ class LoopCommand : public ConditionParser {
   void doCommand();
 };
 
+class Connect : public Command {
+ public:
+  Connect(DataHandler* data_handler1) : Command(data_handler1){};
+  void doCommand();
+};
+
 struct Params {
     DataHandler * d_h;
     int newsockfd;
