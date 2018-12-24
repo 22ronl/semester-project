@@ -23,6 +23,7 @@
 #define CURR_SYMBOL_INDEX 0
 #define BUFFER_SIZE 1024
 #define UNIX_END_OF_LINE '\n'
+#define FIRST_CONDITION_COMMAND_INDEX 1
 void DefineVarCommand::doCommand() {
   string var = this->data_Handler->getSymbolString(NEXT_STRING_POS);
   this->data_Handler->addSymbol(var);
