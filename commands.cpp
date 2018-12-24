@@ -18,12 +18,13 @@
 #define NEXT_STRING_POS 1
 #define NEXT_COMMAND_POS 2
 #define NEXT_COMMAND_POS_1 1
+#define NEXT_COMMAND_POS_3 3
 #define VAR_POS -1
 #define PATH_INDEX 2
 #define CURR_SYMBOL_INDEX 0
 #define BUFFER_SIZE 1024
 #define UNIX_END_OF_LINE '\n'
-#define FIRST_CONDITION_COMMAND_INDEX 1
+#define FIRST_CONDITION_COMMAND_INDEX 2
 void DefineVarCommand::doCommand() {
   string var = this->data_Handler->getSymbolString(NEXT_STRING_POS);
   this->data_Handler->addSymbol(var);
@@ -41,24 +42,28 @@ void EqualCommand::doCommand() {
       path_or_var = path_or_var.substr(1, path_or_var.length()-2);
       this->data_Handler->addPathToTable(var,path_or_var);
       if(this->data_Handler->plane_data.count(path_or_var)) {
-        this->data_Handler->setVarPathValue(var);
+        this->data_Handler->addToUpdateFromSimulator(var,path_or_var);
+        //this->data_Handler->setVarPathValue(var);
       }
     } else {
       this->data_Handler->addPathToTable(var,data_Handler->getVarPath(path_or_var));
       if(this->data_Handler->plane_data.count(data_Handler->getVarPath(path_or_var))) {
-        this->data_Handler->setVarPathValue(var);
+        this->data_Handler->addToUpdateFromSimulator(var, data_Handler->getVarPath(path_or_var));
+        //this->data_Handler->setVarPathValue(var);
       } else {
         this->data_Handler->setSymbolValue(var,data_Handler->getSymbolValue(path_or_var));
       }
     }
+    this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_3);
   }else {
     val = this->data_Handler->getExpressionValue();
     this->data_Handler->setSymbolValue(var, val);
     if(this->data_Handler->isBinded(var)) {
       this->setValueInSimulator(this->data_Handler->getVarPath(var),val);
     }
+    this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
   }
-  this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
+
 }
 
 void EqualCommand::setValueInSimulator(string serverPath, double value) {

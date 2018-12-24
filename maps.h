@@ -6,8 +6,10 @@
 #define SEMSTER_PROJECT_MAPS_H
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
 using namespace std;
+
 class DataHandler {
   int* curr_index;
   unordered_map<string,double> symbol_table;
@@ -16,7 +18,7 @@ class DataHandler {
   unordered_map<string,string> path_table;
   int client_socket;
  public:
-  unordered_map<string,double> plane_data;
+  unordered_map<string,vector<string>> plane_data;
   bool reading_data= true;
   DataHandler(vector<string>& string_command1 ,int* curr_index);
   string getSymbolString(int parm_num);
@@ -33,14 +35,15 @@ class DataHandler {
   bool toPrintString();
   void printString();
   void updatePlaneData(string path , double value);
-  ~DataHandler(){reading_data = false;}
+  ~DataHandler();
   void printPlane();
   bool isPath(string& path);
   void addPathToTable(string var, string path);
-  void setVarPathValue(string &var);
+  //void setVarPathValue(string &var);
   bool isBinded(string& var) { return (bool) this->path_table.count(var);}
   string getVarPath(string & var);
   int getClientSocket(){ return client_socket;}
+  void addToUpdateFromSimulator(string & var , string path);
   void setClientSocket(int client_socket){this->client_socket = client_socket;}
   std::vector<std::string> plane_data_list{"/instrumentation/airspeed-indicator/indicated-speed-kt",
                                              "/instrumentation/altimeter/indicated-altitude-ft",

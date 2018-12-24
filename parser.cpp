@@ -80,7 +80,7 @@ void Parser::run() {
     if(curr_index >= string_command.size()-1) {
       break;
     }
-    d_h->printPlane();
+    //d_h->printPlane();
   }
   this->deleteCommands();
 

@@ -67,7 +67,7 @@ DataHandler::DataHandler(vector<string> &string_command1, int *curr_index) {
   this->string_command =string_command1;
   this->curr_index =curr_index;
   for(string s : plane_data_list) {
-    this->plane_data[s] = 0.0;
+    this->plane_data.insert(make_pair(s ,vector<string>()));
   }
 
 
@@ -83,11 +83,11 @@ string DataHandler::getVarPath(string &var) {
     throw "invalid var to bind";
   }
 }
-void DataHandler::setVarPathValue(string &var) {
-  double var_value;
-  var_value = this->plane_data[this->path_table[var]];
-  this->setSymbolValue(var ,var_value);
-}
+//void DataHandler::setVarPathValue(string &var) {
+ // double var_value;
+ // var_value = this->plane_data[this->path_table[var]];
+ // this->setSymbolValue(var ,var_value);
+//}
 bool DataHandler::isPath(string& path) {
   return path[FIRST_CHAR] == '\"';
 }
@@ -265,12 +265,22 @@ void DataHandler::printString() {
 }
 
 void DataHandler::updatePlaneData(string path, double value) {
-  this->plane_data[path] = value;
+  if(!this->plane_data[path].empty()) {
+    for(const string & var : this->plane_data[path]) {
+      this->setSymbolValue(var,value);
+    }
+  }
+}
+DataHandler::~DataHandler() {
+  reading_data = false;
+}
+void DataHandler::addToUpdateFromSimulator(string &var , string path) {
+  this->plane_data[path].push_back(var);
 }
 
-void DataHandler::printPlane() {
-  for(auto& x : this->plane_data) {
-    cout<< x.second << " |";
-  }
-  cout << endl;
-}
+//void DataHandler::printPlane() {
+ // for(auto& x : this->plane_data) {
+  //  cout<< x.second << " |";
+ // }
+  //cout << endl;
+//}
