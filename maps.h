@@ -13,6 +13,7 @@ class DataHandler {
   unordered_map<string,double> symbol_table;
   vector<string> string_command;
   unordered_map<string,double> plane_data;
+  unordered_map<string,string> path_table;
   int client_socket;
  public:
   bool reading_data= true;
@@ -33,6 +34,11 @@ class DataHandler {
   void updatePlaneData(string path , double value);
   ~DataHandler(){reading_data = false;}
   void printPlane();
+  bool isPath(string& path);
+  void addPathToTable(string var, string path);
+  void setVarPathValue(string &var);
+  bool isBinded(string& var) { return (bool) this->path_table.count(var);}
+  string getVarPath(string & var);
   int getClientSocket(){ return client_socket;}
   void setClientSocket(int client_socket){this->client_socket = client_socket;}
   std::vector<std::string> plane_data_list{"/instrumentation/airspeed-indicator/indicated-speed-kt",

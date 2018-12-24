@@ -72,7 +72,34 @@ DataHandler::DataHandler(vector<string> &string_command1, int *curr_index) {
 
 
 }
+void DataHandler::addPathToTable(string var, string path) {
+  if(this->plane_data.count(path)) {
+    this->path_table[var] = path;
+  } else {
+    throw "invalid path";
+  }
 
+}
+
+string DataHandler::getVarPath(string &var) {
+  if(this->path_table.count(var)) {
+    return this->path_table[var];
+  } else {
+    throw "invalid var to bind";
+  }
+}
+void DataHandler::setVarPathValue(string &var) {
+  double var_value;
+  var_value = this->plane_data[this->path_table[var]];
+  this->setSymbolValue(var ,var_value);
+}
+bool DataHandler::isPath(string& path) {
+  if(this->plane_data.count(path)) {
+    return true;
+  } else {
+    return false;
+  }
+}
 void DataHandler::setSymbolValue(string symbol, double value){
   if(!this->symbol_table.count(symbol)) {
     throw "symbol does not exist";

@@ -19,6 +19,7 @@ class DefineVarCommand : public Command {
 class EqualCommand : public Command {
  public:
   EqualCommand(DataHandler* data_handler1) : Command(data_handler1){};
+  void setValueInSimulator(string serverPath, double value);
   void doCommand();
 };
 

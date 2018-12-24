@@ -19,7 +19,7 @@
 #define NEXT_COMMAND_POS 2
 #define NEXT_COMMAND_POS_1 1
 #define VAR_POS -1
-#define FIRST_CONDITION_COMMAND_INDEX 2
+#define PATH_INDEX 2
 #define CURR_SYMBOL_INDEX 0
 #define BUFFER_SIZE 1024
 #define UNIX_END_OF_LINE '\n'
@@ -28,13 +28,46 @@ void DefineVarCommand::doCommand() {
   this->data_Handler->addSymbol(var);
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS);
 }
-
 void EqualCommand::doCommand() {
+
   string var = this->data_Handler->getSymbolString(VAR_POS);
-  double val = this->data_Handler->getExpressionValue();
-  this->data_Handler->setSymbolValue(var, val);
+  double val;
+  string is_bind = this->data_Handler->getSymbolString(NEXT_COMMAND_POS_1);
+  if(is_bind == "bind") {
+    string path_or_var =  this->data_Handler->getSymbolString(PATH_INDEX);
+    //check if var already exist.
+    if(this->data_Handler->isPath(path_or_var)) {
+      this->data_Handler->addPathToTable(var,path_or_var);
+      this->data_Handler->setVarPathValue(var);
+    } else {
+      this->data_Handler->addPathToTable(var,data_Handler->getVarPath(var));
+      this->data_Handler->setVarPathValue(var);
+    }
+  }else {
+    val = this->data_Handler->getExpressionValue();
+    this->data_Handler->setSymbolValue(var, val);
+    if(this->data_Handler->isBinded(var)) {
+      this->setValueInSimulator(this->data_Handler->getVarPath(var),val);
+    }
+  }
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
+
+void EqualCommand::setValueInSimulator(string serverPath, double value) {
+  string massage = "set" + serverPath +" " + to_string(value) + "\r\n";
+  //char buffer[1024];
+  //strcpy(buffer, massage.c_str());
+  int rc = send(this->data_Handler->getClientSocket(), massage.c_str(),strlen(massage.c_str()), 0);
+  cout<<"sent rc" + to_string(rc) <<endl;
+}
+
+
+//void EqualCommand::doCommand() {
+ // string var = this->data_Handler->getSymbolString(VAR_POS);
+ // double val = this->data_Handler->getExpressionValue();
+ // this->data_Handler->setSymbolValue(var, val);
+ // this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
+//}
 
 bool booleanOperatorResult(double first_parm ,string& boolean_operator, double second_parm){
   if(boolean_operator == "<") {
