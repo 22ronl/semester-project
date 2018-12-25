@@ -359,6 +359,7 @@ void Connect::doCommand() {
       break;
     }
   }
+  delete[] write_able;
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
 

@@ -1,9 +1,16 @@
 #include <iostream>
 #include "utils.h"
 #include "parser.h"
+#define NUM_OF_ARGV 2
+#define FILE_NAME_INDEX 1
 //void dataParser(vector<string>& result , char* buffer_index);
 //void updateData(char * buffer , DataHandler * d_h,int input_size);
-int main() {
+int main(int argc, char *argv[]) {
+  if(argc != NUM_OF_ARGV) {
+    cout<< "invalid num of CLI"<<endl;
+  }
+  string file_name = argv[FILE_NAME_INDEX];
+
   //char buffer[] ="0.0000,1.00000,3.00000,0.1111";
   //string lolo = buffer;
 
@@ -17,7 +24,7 @@ int main() {
   //string s = "-5.3+-3.98";
   //DataHandler d();
   //cout <<addExpressionTokens(s,tokens);
-  Lexer lex("example.txt");
+  Lexer lex(file_name);
   //vector<string> tokens = lex.get_string_command();
   //int a =3;
   //vector<string>t;
