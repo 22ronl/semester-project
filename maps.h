@@ -20,7 +20,7 @@ class DataHandler {
  public:
   int server_socket;
   pthread_t thread;
-  double rpm;
+  double rpm =0;
   string input_remainder="";
   vector<string> plane_data_input;
   unordered_map<string,vector<string>> plane_data;
