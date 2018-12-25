@@ -204,11 +204,12 @@ void* ThreadGetPlaneData(void *param) {
   while (params->d_h->reading_data) {
 
       bzero(buffer, BUFFER_SIZE);
-      read(params->newsockfd, buffer, BUFFER_SIZE-1);
+      n =read(params->newsockfd, buffer, BUFFER_SIZE-1);
       if (n < 0) {
         perror("ERROR reading from socket");
        exit(1);
       }
+    printf("Here is the second message: %s\n",buffer);
       updateData(buffer,params->d_h);
 
   }
@@ -257,9 +258,14 @@ void OpenDataServer::doCommand() {
   }
 
   /* If connection is established then start communicating */
-  //bzero(buffer,256);
-  //n = read( newsockfd,buffer,BUFFER_SIZE-1 );
-   // printf("Here is the message: %s\n",buffer);
+
+  bzero(buffer,BUFFER_SIZE);
+  n = read( newsockfd,buffer,BUFFER_SIZE-1 );
+  if (n < 0) {
+    perror("ERROR reading from socket");
+    exit(1);
+  }
+  printf("Here is the first message: %s\n",buffer);
   DataHandler * d_h = this->data_Handler;
 
   thread_params.newsockfd = newsockfd;

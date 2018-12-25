@@ -66,7 +66,7 @@ class DataHandler {
                                              "/controls/flight/elevator",
                                              "/controls/flight/rudder",
                                              "/controls/flight/flaps",
-                                             "/controls/engines/engine/throttle",
+                                             "/controls/engines/current-engine/throttle",
                                              "/engines/engine/rpm"};
 };
 
