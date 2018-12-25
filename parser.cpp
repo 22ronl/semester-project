@@ -88,6 +88,7 @@ void Parser::run() {
     }
     //d_h->printPlane();
   }
+
   this->deleteCommands();
 
   delete d_h;

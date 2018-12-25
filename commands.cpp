@@ -68,7 +68,7 @@ void EqualCommand::doCommand() {
 }
 
 void EqualCommand::setValueInSimulator(string serverPath, double value) {
-  string massage = "set" + serverPath +" " + to_string(value) + "\r\n";
+  string massage = "set " + serverPath +" " + to_string(value) + "\r\n";
   //char buffer[1024];
   //strcpy(buffer, massage.c_str());
   int rc = send(this->data_Handler->getClientSocket(), massage.c_str(),strlen(massage.c_str()), 0);
@@ -238,7 +238,6 @@ void* ThreadGetPlaneData(void *param) {
         perror("ERROR reading from socket");
        exit(1);
       }
-    printf("Here is the second message: %s\n",buffer);
       updateData(buffer,params->d_h,n);
 
   }
@@ -355,6 +354,7 @@ void Connect::doCommand() {
   }
   this->data_Handler->setClientSocket(sockfd);
   while(true) {
+    //cout<< "rpm is : " + to_string(this->data_Handler->rpm)<<endl;
     if(this->data_Handler->rpm > RPM_MIN_VALUE) {
       break;
     }
