@@ -25,7 +25,7 @@
 #define BUFFER_SIZE 1024
 #define UNIX_END_OF_LINE '\n'
 #define FIRST_CONDITION_COMMAND_INDEX 2
-#define RPM_MIN_VALUE 700
+#define RPM_MIN_VALUE 760
 void DefineVarCommand::doCommand() {
   string var = this->data_Handler->getSymbolString(NEXT_STRING_POS);
   this->data_Handler->addSymbol(var);
@@ -72,7 +72,7 @@ void EqualCommand::setValueInSimulator(string serverPath, double value) {
   //char buffer[1024];
   //strcpy(buffer, massage.c_str());
   int rc = send(this->data_Handler->getClientSocket(), massage.c_str(),strlen(massage.c_str()), 0);
-  cout<<"sent rc" + to_string(rc) <<endl;
+  //cout<<"sent rc" + to_string(rc) <<endl;
 }
 
 
@@ -354,7 +354,7 @@ void Connect::doCommand() {
   }
   this->data_Handler->setClientSocket(sockfd);
   while(true) {
-    //cout<< "rpm is : " + to_string(this->data_Handler->rpm)<<endl;
+    cout<< "rpm is : " + to_string(this->data_Handler->rpm)<<endl;
     if(this->data_Handler->rpm > RPM_MIN_VALUE) {
       break;
     }
