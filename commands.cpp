@@ -320,3 +320,10 @@ void Connect::doCommand() {
   this->data_Handler->setClientSocket(sockfd);
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
+
+void Enterc::doCommand() {
+  string input;
+  cout<<"please press any character to continue"<<endl;
+  cin >> input;
+  this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
+}

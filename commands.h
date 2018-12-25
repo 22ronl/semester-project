@@ -80,5 +80,12 @@ private:
   void doCommand();
 };
 
+class Enterc : public Command {
+ public:
+  Enterc(DataHandler* data_handler1) : Command(data_handler1){};
+  void doCommand();
+
+};
+
 
 #endif //
