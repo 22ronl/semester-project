@@ -14,10 +14,15 @@ class DataHandler {
   int* curr_index;
   unordered_map<string,double> symbol_table;
   vector<string> string_command;
-
   unordered_map<string,string> path_table;
   int client_socket;
+
  public:
+  int server_socket;
+  pthread_t thread;
+  double rpm;
+  string input_remainder="";
+  vector<string> plane_data_input;
   unordered_map<string,vector<string>> plane_data;
   bool reading_data= true;
   DataHandler(vector<string>& string_command1 ,int* curr_index);

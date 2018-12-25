@@ -2,33 +2,35 @@
 #include "utils.h"
 #include "parser.h"
 //void dataParser(vector<string>& result , char* buffer_index);
-//void updateData(char * buffer , DataHandler * d_h);
+void updateData(char * buffer , DataHandler * d_h,int input_size);
 int main() {
-  //char buffer[] ="0.0000,1.00000,3.00000\n";
+  char buffer[] ="0.0000,1.00000,3.00000,0.1111";
+  string lolo = buffer;
+
   //vector<string> result;
   //dataParser(result ,buffer);
-  //int x =5;
-  //vector<string> kkaka {"kaka"};
-  //DataHandler * d_h = new DataHandler(kkaka, &x);
-  //updateData(buffer,d_h);
- // vector<string> tokens;
+  int x =5;
+  vector<string> kkaka {"kaka"};
+  DataHandler * d_h = new DataHandler(kkaka, &x);
+  updateData(buffer,d_h,lolo.length());
+ // vector<string> tokens;2
   //string s = "-5.3+-3.98";
   //DataHandler d();
   //cout <<addExpressionTokens(s,tokens);
-  Lexer lex("example.txt");
+  //Lexer lex("example.txt");
   //vector<string> tokens = lex.get_string_command();
   //int a =3;
   //vector<string>t;
   //DataHandler d(tokens ,&a);
   //d.addExpressionTokens(s ,t);
   //lex.print_vector();
-  vector<string> string_command =lex.get_string_command();
-  Parser p(string_command);
-  try {
-    p.run();
-  } catch (...) {
-    cout<< "falid"<<endl;
-  }
+  //vector<string> string_command =lex.get_string_command();
+  //Parser p(string_command);
+  //try {
+  //  p.run();
+  //} catch (...) {
+   // cout<< "falid"<<endl;
+ // }
   //Expression* e= new Plus(new Number(3) , new Mul( new Div(new Number(4), new
     //  Number(2)) , new Number(5)));
   //Expression *e2 = new Min(e,new Number(7));

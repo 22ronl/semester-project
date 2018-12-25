@@ -3,6 +3,7 @@
 //
 
 #include "maps.h"
+#include <unistd.h>
 #define FIRST_CHAR 0
 #define ONLY_MINUS_OP 1
 #define NEXT_STRING 1
@@ -273,6 +274,9 @@ void DataHandler::updatePlaneData(string path, double value) {
 }
 DataHandler::~DataHandler() {
   reading_data = false;
+  close(server_socket);
+  close(client_socket);
+  pthread_cancel(thread);
 }
 void DataHandler::addToUpdateFromSimulator(string &var , string path) {
   this->plane_data[path].push_back(var);

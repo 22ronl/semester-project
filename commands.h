@@ -75,9 +75,11 @@ struct Params {
 class OpenDataServer : public Command {
 private:
     struct Params thread_params;
+
  public:
   OpenDataServer(DataHandler* data_handler1) : Command(data_handler1){};
   void doCommand();
+
 };
 
 class Enterc : public Command {

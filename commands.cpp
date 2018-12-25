@@ -25,6 +25,7 @@
 #define BUFFER_SIZE 1024
 #define UNIX_END_OF_LINE '\n'
 #define FIRST_CONDITION_COMMAND_INDEX 2
+#define RPM_MIN_VALUE 700
 void DefineVarCommand::doCommand() {
   string var = this->data_Handler->getSymbolString(NEXT_STRING_POS);
   this->data_Handler->addSymbol(var);
@@ -170,30 +171,58 @@ void SleepCommand::doCommand() {
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
 
-void dataParser(vector<string>& result , char* buffer_index) {
+bool dataParser(vector<string>& result,string sim_input,string& remainder ) {
   string var_value;
-  while(true) {
-    while(*buffer_index != ',' )  {
-       if(*buffer_index == UNIX_END_OF_LINE) {
-            break;
+  remainder.clear();
+  int i=0;
+  bool is_end_of_line = false;
+  bool cut_middle_of_input = false;
+  while(i < sim_input.length()) {
+    while(sim_input[i] != ',' )  {
+       if(sim_input[i] == UNIX_END_OF_LINE) {
+         is_end_of_line = true;
+         break;
        }
-      var_value += *buffer_index;
-      buffer_index++;
+      var_value += sim_input[i];
+      i++;
+      if(i >= sim_input.length()) {
+        cut_middle_of_input= true;
+        break;
+      }
+    }
+    if (cut_middle_of_input) {
+      break;
     }
     result.push_back(var_value);
     var_value.clear();
-      if(*buffer_index == UNIX_END_OF_LINE) {
-          break;
+      if(sim_input[i] == UNIX_END_OF_LINE) {
+        is_end_of_line = true;
+        break;
       }
-    buffer_index++;
+    i++;
   }
+
+  if(!is_end_of_line) {
+    remainder = var_value;
+    return false;
+  }
+  remainder = sim_input.substr(i+1 ,sim_input.length() -i );
+  return true;
 }
-void updateData(char * buffer , DataHandler * d_h) {
-  vector<string> plane_data;
-  dataParser(plane_data ,buffer);
-  for(int i =0 ; i< plane_data.size();i++) {
-    d_h->updatePlaneData(d_h->plane_data_list[i]
-            ,stof(plane_data[i]));
+void updateData(char * buffer , DataHandler * d_h, int input_size) {
+
+  bool full_input;
+  buffer[input_size] ='\0';
+  string sim_input = d_h ->input_remainder + buffer;
+
+
+  full_input = dataParser(d_h->plane_data_input ,sim_input ,d_h->input_remainder);
+  if(full_input) {
+    for (int i = 0; i < d_h->plane_data_input.size(); i++) {
+      d_h->updatePlaneData(d_h->plane_data_list[i], stof(d_h->plane_data_input[i]));
+    }
+    d_h->rpm = stof(d_h->plane_data_input[d_h->plane_data_input.size() -1]);
+    d_h->plane_data_input.clear();
   }
 }
 
@@ -210,7 +239,7 @@ void* ThreadGetPlaneData(void *param) {
        exit(1);
       }
     printf("Here is the second message: %s\n",buffer);
-      updateData(buffer,params->d_h);
+      updateData(buffer,params->d_h,n);
 
   }
 
@@ -256,23 +285,24 @@ void OpenDataServer::doCommand() {
     perror("ERROR on accept");
     exit(1);
   }
-
+  this->data_Handler->server_socket =newsockfd;
+  close(sockfd);
   /* If connection is established then start communicating */
 
-  bzero(buffer,BUFFER_SIZE);
-  n = read( newsockfd,buffer,BUFFER_SIZE-1 );
-  if (n < 0) {
-    perror("ERROR reading from socket");
-    exit(1);
-  }
-  printf("Here is the first message: %s\n",buffer);
+  //bzero(buffer,BUFFER_SIZE);
+  //n = read( newsockfd,buffer,BUFFER_SIZE-1 );
+  //if (n < 0) {
+   // perror("ERROR reading from socket");
+   // exit(1);
+  //}
+  //printf("Here is the first message: %s\n",buffer);
   DataHandler * d_h = this->data_Handler;
 
   thread_params.newsockfd = newsockfd;
   thread_params.d_h = d_h;
   pthread_t t1;
-
   pthread_create(&t1, nullptr,ThreadGetPlaneData,(void*)&thread_params);
+  this->data_Handler->thread = t1;
   //if (n < 0) {
    // perror("ERROR reading from socket");
     //exit(1);
@@ -324,6 +354,11 @@ void Connect::doCommand() {
     exit(1);
   }
   this->data_Handler->setClientSocket(sockfd);
+  while(true) {
+    if(this->data_Handler->rpm > RPM_MIN_VALUE) {
+      break;
+    }
+  }
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
 
