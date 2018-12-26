@@ -243,6 +243,33 @@ void* ThreadGetPlaneData(void *param) {
   }
 
 }
+bool valid_value(string& input) {
+  for(int i=0 ; i<input.length()-1 ; i++) {
+    if(input[i] != '0' && input[i] != ',' ){
+      return true;
+    }
+  }
+  return false;
+}
+void wait_for_valid_value(int newsockfd) {
+  char buffer[BUFFER_SIZE];
+  string sim_input;
+  int n;
+  while (true) {
+    bzero(buffer, BUFFER_SIZE);
+    n =read(newsockfd, buffer, BUFFER_SIZE-1);
+    if (n < 0) {
+      perror("ERROR reading from socket");
+      exit(1);
+    }
+    buffer[n] ='\0';
+    sim_input = buffer;
+    cout<<"input from sim is : " + sim_input<<endl;
+    if(valid_value(sim_input)) {
+      break;
+    }
+  }
+}
 
 void OpenDataServer::doCommand() {
   int sockfd, newsockfd, portno, clilen;
@@ -284,6 +311,8 @@ void OpenDataServer::doCommand() {
     perror("ERROR on accept");
     exit(1);
   }
+
+  wait_for_valid_value(newsockfd);
   this->data_Handler->server_socket =newsockfd;
   close(sockfd);
   /* If connection is established then start communicating */
