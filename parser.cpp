@@ -90,8 +90,9 @@ void Parser::run() {
   }
 
   this->deleteCommands();
-
+  pthread_t t = d_h->thread;
   delete d_h;
+  pthread_join(t,NULL);
 }
 
 void Parser::deleteCommands() {
