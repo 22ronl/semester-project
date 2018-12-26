@@ -53,12 +53,11 @@ bool isValidVar(string& var) {
 
 bool isSystemName(string& symbol) {
   map<string,int> system_names{{"var",1} ,{"print",1},{"sleep",1}
-  ,{"if",1},{"while",1},{"connect",1},{"openDataServer",1}};
+  ,{"if",1},{"while",1},{"connect",1},{"openDataServer",1},{"Enterc",1} };
   return (bool) system_names.count(symbol);
 }
 
 void DataHandler::addSymbol(string symbol){
-
   if(!isValidVar(symbol) || this->isSymbol(symbol) || isSystemName(symbol)) {
     throw "invalid var";
   }
@@ -95,13 +94,16 @@ bool DataHandler::isPath(string& path) {
   return path[FIRST_CHAR] == '\"';
 }
 void DataHandler::setSymbolValue(string symbol, double value){
+  this->mutex_symbol_table.lock();
   if(!this->symbol_table.count(symbol)) {
     throw "symbol does not exist";
   }
   this->symbol_table[symbol] = value;
+  this->mutex_symbol_table.unlock();
 }
 
 bool DataHandler::isSymbol(string &symbol) {
+
   if(this->symbol_table.count(symbol)){
     return true;
   } else {

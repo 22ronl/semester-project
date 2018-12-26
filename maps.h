@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <map>
 #include <vector>
+#include <mutex>
 using namespace std;
 
 class DataHandler {
@@ -16,7 +17,7 @@ class DataHandler {
   vector<string> string_command;
   unordered_map<string,string> path_table;
   int client_socket;
-
+  mutex mutex_symbol_table;
  public:
   int server_socket;
   pthread_t thread;
