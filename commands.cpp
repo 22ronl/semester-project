@@ -264,7 +264,6 @@ void wait_for_valid_value(int newsockfd) {
     }
     buffer[n] ='\0';
     sim_input = buffer;
-    cout<<"input from sim is : " + sim_input<<endl;
     if(valid_value(sim_input)) {
       break;
     }
