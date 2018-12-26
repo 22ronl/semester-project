@@ -20,7 +20,7 @@ using namespace std;
 
 using namespace std;
 string DataHandler::getSymbolString(int parm_num){
-  if(*this->curr_index + parm_num >= this->string_command.size()) {
+  if(*this->curr_index + parm_num >= (int) this->string_command.size() ) {
     return "out of bound";
   }
   return this->string_command[*this->curr_index +parm_num];
@@ -147,7 +147,8 @@ bool DataHandler:: addExpressionTokens(string& string1,vector<string>& tokens) {
     is_negative = true;
     i++;
   }
-  while (i<string1.size()) {
+  int string1_size = (int) string1.size();
+  while (i< string1_size) {
     if(isDigit(string1[i])){
       do {
         temp_num += string1[i];

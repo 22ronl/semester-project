@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   } catch (...) {
    cout<< "failed"<<endl;
   }
-  exit(0);
+  return 0;
 }
 
 

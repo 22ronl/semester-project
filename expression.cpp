@@ -40,6 +40,7 @@ double Div::calculate() {
 
 
 bool is_num(const string & token) {
+
   int i=0;
   if(token[i] == '.') {
     return false;
@@ -50,7 +51,8 @@ bool is_num(const string & token) {
     }
     i++;
   }
-  for(; i<token.size();i++ ) {
+  int token_size = (int) token.size();
+  for(; i< token_size;i++ ) {
     // for a double
     if(token[i] == '.') {
       continue;

@@ -84,7 +84,7 @@ void Parser::run() {
     } else {
       throw "invalid command";
     }
-    if(curr_index >= string_command.size()-1) {
+    if(curr_index >= (int) string_command.size()-1) {
       break;
     }
   }

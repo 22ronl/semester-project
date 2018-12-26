@@ -67,7 +67,7 @@ void EqualCommand::doCommand() {
 
 void EqualCommand::setValueInSimulator(string serverPath, double value) {
   string massage = "set " + serverPath +" " + to_string(value) + "\r\n";
-  int rc = send(this->data_Handler->getClientSocket(), massage.c_str(),strlen(massage.c_str()), 0);
+  send(this->data_Handler->getClientSocket(), massage.c_str(),strlen(massage.c_str()), 0);
 }
 
 bool booleanOperatorResult(double first_parm ,string& boolean_operator, double second_parm){
@@ -164,7 +164,8 @@ bool dataParser(vector<string>& result,string sim_input,string& remainder ) {
   int i=0;
   bool is_end_of_line = false;
   bool cut_middle_of_input = false;
-  while(i < sim_input.length()) {
+  int input_len = (int) sim_input.length();
+  while(i < input_len) {
     while(sim_input[i] != ',' )  {
        if(sim_input[i] == UNIX_END_OF_LINE) {
          is_end_of_line = true;
@@ -172,7 +173,7 @@ bool dataParser(vector<string>& result,string sim_input,string& remainder ) {
        }
       var_value += sim_input[i];
       i++;
-      if(i >= sim_input.length()) {
+      if(i >= input_len) {
         cut_middle_of_input= true;
         break;
       }
@@ -202,7 +203,8 @@ void updateData(char * buffer , DataHandler * d_h, int input_size) {
   string sim_input = d_h ->input_remainder + buffer;
   full_input = dataParser(d_h->plane_data_input ,sim_input ,d_h->input_remainder);
   if(full_input) {
-    for (int i = 0; i < d_h->plane_data_input.size(); i++) {
+    int plane_data_size = (int) d_h->plane_data_input.size();
+    for (int i = 0; i < plane_data_size ; i++) {
       d_h->updatePlaneData(d_h->plane_data_list[i], stof(d_h->plane_data_input[i]));
     }
     d_h->rpm = stof(d_h->plane_data_input[d_h->plane_data_input.size() -1]);
@@ -227,7 +229,8 @@ void* ThreadGetPlaneData(void *param) {
 }
 
 bool valid_value(string& input) {
-  for(int i=0 ; i<input.length()-1 ; i++) {
+  int input_length =(int) input.length()-1;
+  for(int i=0 ; i< input_length ; i++) {
     if(input[i] != '0' && input[i] != ',' && input[i] !='.' && input[i] != '1' ){
       return true;
     }
@@ -256,9 +259,7 @@ void wait_for_valid_value(int newsockfd) {
 
 void OpenDataServer::doCommand() {
   int sockfd, newsockfd, portno, clilen;
-  char buffer[BUFFER_SIZE];
   struct sockaddr_in serv_addr, cli_addr;
-  int  n;
   /* First call to socket() function */
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
