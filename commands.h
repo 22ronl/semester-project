@@ -74,7 +74,7 @@ struct Params {
 };
 class OpenDataServer : public Command {
 private:
-    struct Params thread_params;
+    struct Params * thread_params = new struct Params;
 
  public:
   OpenDataServer(DataHandler* data_handler1) : Command(data_handler1){};

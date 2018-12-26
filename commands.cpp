@@ -232,15 +232,16 @@ void* ThreadGetPlaneData(void *param) {
   char buffer[BUFFER_SIZE];
   while (params->d_h->reading_data) {
 
-      bzero(buffer, BUFFER_SIZE);
-      n =read(params->newsockfd, buffer, BUFFER_SIZE-1);
-      if (n < 0) {
-        perror("ERROR reading from socket");
-       exit(1);
-      }
-      updateData(buffer,params->d_h,n);
+    bzero(buffer, BUFFER_SIZE);
+    n = read(params->newsockfd, buffer, BUFFER_SIZE - 1);
+    if (n < 0) {
+      perror("ERROR reading from socket");
+      exit(1);
+    }
+    updateData(buffer, params->d_h, n);
 
   }
+  delete params;
 
 }
 bool valid_value(string& input) {
@@ -325,10 +326,10 @@ void OpenDataServer::doCommand() {
   //printf("Here is the first message: %s\n",buffer);
   DataHandler * d_h = this->data_Handler;
 
-  thread_params.newsockfd = newsockfd;
-  thread_params.d_h = d_h;
+  thread_params->newsockfd = newsockfd;
+  thread_params->d_h = d_h;
   pthread_t t1;
-  pthread_create(&t1, nullptr,ThreadGetPlaneData,(void*)&thread_params);
+  pthread_create(&t1, nullptr,ThreadGetPlaneData,(void*)thread_params);
   this->data_Handler->thread = t1;
   //if (n < 0) {
    // perror("ERROR reading from socket");
