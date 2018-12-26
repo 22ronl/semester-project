@@ -45,7 +45,6 @@ class DataHandler {
   void printPlane();
   bool isPath(string& path);
   void addPathToTable(string var, string path);
-  //void setVarPathValue(string &var);
   bool isBinded(string& var) { return (bool) this->path_table.count(var);}
   string getVarPath(string & var);
   int getClientSocket(){ return client_socket;}

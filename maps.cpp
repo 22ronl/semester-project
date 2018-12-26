@@ -85,14 +85,11 @@ string DataHandler::getVarPath(string &var) {
     throw "invalid var to bind";
   }
 }
-//void DataHandler::setVarPathValue(string &var) {
- // double var_value;
- // var_value = this->plane_data[this->path_table[var]];
- // this->setSymbolValue(var ,var_value);
-//}
+
 bool DataHandler::isPath(string& path) {
   return path[FIRST_CHAR] == '\"';
 }
+
 void DataHandler::setSymbolValue(string symbol, double value){
   this->mutex_symbol_table.lock();
   if(!this->symbol_table.count(symbol)) {
@@ -103,7 +100,6 @@ void DataHandler::setSymbolValue(string symbol, double value){
 }
 
 bool DataHandler::isSymbol(string &symbol) {
-
   if(this->symbol_table.count(symbol)){
     return true;
   } else {
@@ -212,6 +208,7 @@ bool DataHandler::isNextTokenOp(int index) {
   }
   return isOperator(token[FIRST_CHAR]);
 }
+
 void correct_first_minus(vector<string>& tokens) {
   if(tokens[FIRST_STRING] == "-") {
     if(tokens[SECOND_STRING][FIRST_CHAR] == '-') {
@@ -222,6 +219,7 @@ void correct_first_minus(vector<string>& tokens) {
     tokens.erase(tokens.begin());
   }
 }
+
 // will put string in index of the parm we return his value
 double DataHandler::getExpressionValue() {
   vector<string> expression_token;
@@ -243,7 +241,6 @@ double DataHandler::getExpressionValue() {
   // clear memory;
   deleteExpression(e);
   *this->curr_index += i;
-
   return expression_value;
 }
 
@@ -297,9 +294,3 @@ void DataHandler::addToUpdateFromSimulator(string &var , string path) {
   this->plane_data[path].push_back(var);
 }
 
-//void DataHandler::printPlane() {
- // for(auto& x : this->plane_data) {
-  //  cout<< x.second << " |";
- // }
-  //cout << endl;
-//}

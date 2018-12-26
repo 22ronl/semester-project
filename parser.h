@@ -26,8 +26,6 @@ class Parser {
   Expression * initializeConditionCommand(DataHandler * d_h ,int& index,string condition);
   void setConditionCommand(DataHandler* d_h ,string& condition_command);
   void deleteCommands();
-
-
 };
 
 #endif //PARSER_H

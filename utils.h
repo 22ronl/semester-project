@@ -17,8 +17,6 @@ class Lexer {
   void create_string_command();
   vector<string> get_string_command();
   void print_vector();
-
-
 };
 
 #endif //UTILS_H

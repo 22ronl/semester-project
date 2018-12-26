@@ -12,7 +12,6 @@ Lexer::Lexer(const string& file_name) {
   this->create_string_command();
 }
 void Lexer::create_string_command() {
-
   ifstream myFile(this->file_name);
   if(!(myFile.is_open())) {
     throw "could not open file";

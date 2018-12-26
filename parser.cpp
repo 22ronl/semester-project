@@ -67,6 +67,7 @@ void Parser::setConditionCommand(DataHandler *d_h ,string& condition_command) {
     this->command_map["while"] = this->initializeConditionCommand(d_h,index,"while");
   }
 }
+
 void Parser::run() {
   auto * d_h = new DataHandler(this->string_command,&curr_index);
   this->initializeCommandMap(d_h);
@@ -86,9 +87,7 @@ void Parser::run() {
     if(curr_index >= string_command.size()-1) {
       break;
     }
-    //d_h->printPlane();
   }
-
   this->deleteCommands();
   pthread_t t = d_h->thread;
   delete d_h;

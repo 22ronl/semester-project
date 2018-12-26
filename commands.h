@@ -50,7 +50,6 @@ class ConditionParser : public Command {
 };
 
 class IfCommand :  public ConditionParser {
-
  public:
   IfCommand(DataHandler* data_handler1) : ConditionParser(data_handler1){};
   void doCommand();

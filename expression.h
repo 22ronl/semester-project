@@ -37,7 +37,6 @@ class BinaryExpression : public Expression {
   Expression* getRightExp(){ return this->right_exp;}
   double calculate() =0;
   ~BinaryExpression(){};
-
 };
 
 class Plus : public BinaryExpression {
@@ -78,7 +77,5 @@ class CommandExpression : public Expression {
     CommandExpression(const CommandExpression& c_e): command(c_e.command) {};
     CommandExpression& operator=(const CommandExpression& other);
     double calculate();
-
-
 };
 #endif //EXPRESSION_H
