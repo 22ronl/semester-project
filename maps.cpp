@@ -10,6 +10,8 @@
 #define SECOND_CHAR 1
 #define ONE_CHAR 1
 #define ONE_DOT 1
+#define FIRST_STRING 0
+#define SECOND_STRING 1
 #include "expression.h"
 #include <map>
 #include <iostream>
@@ -208,6 +210,16 @@ bool DataHandler::isNextTokenOp(int index) {
   }
   return isOperator(token[FIRST_CHAR]);
 }
+void correct_first_minus(vector<string>& tokens) {
+  if(tokens[FIRST_STRING] == "-") {
+    if(tokens[SECOND_STRING][FIRST_CHAR] == '-') {
+      tokens[SECOND_STRING] = tokens[SECOND_STRING].substr(SECOND_CHAR,tokens[SECOND_STRING].length() -ONE_CHAR);
+    } else {
+      tokens[SECOND_STRING] = "-" + tokens[SECOND_STRING];
+    }
+    tokens.erase(tokens.begin());
+  }
+}
 // will put string in index of the parm we return his value
 double DataHandler::getExpressionValue() {
   vector<string> expression_token;
@@ -222,6 +234,7 @@ double DataHandler::getExpressionValue() {
     curr_token = this->getSymbolString(i);
     is_last_op = this->addExpressionTokens(curr_token ,expression_token);
   }while (is_last_op || this->isNextTokenOp(i+1));
+  correct_first_minus(expression_token);
   postfix_tokens = infixToPostfix(expression_token);
   e = createExpression(postfix_tokens);
   expression_value = e->calculate();

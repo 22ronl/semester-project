@@ -6,10 +6,10 @@
 //void dataParser(vector<string>& result , char* buffer_index);
 //void updateData(char * buffer , DataHandler * d_h,int input_size);
 int main(int argc, char *argv[]) {
-  if(argc != NUM_OF_ARGV) {
-    cout<< "invalid num of CLI"<<endl;
-  }
-  string file_name = argv[FILE_NAME_INDEX];
+ // if(argc != NUM_OF_ARGV) {
+   // cout<< "invalid num of CLI"<<endl;
+  //}
+  //string file_name = argv[FILE_NAME_INDEX];
 
   //char buffer[] ="0.0000,1.00000,3.00000,0.1111";
   //string lolo = buffer;
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   //string s = "-5.3+-3.98";
   //DataHandler d();
   //cout <<addExpressionTokens(s,tokens);
-  Lexer lex(file_name);
+  Lexer lex("example.txt");
   //vector<string> tokens = lex.get_string_command();
   //int a =3;
   //vector<string>t;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   try {
     p.run();
   } catch (...) {
-   cout<< "falid"<<endl;
+   cout<< "faild"<<endl;
   }
   //Expression* e= new Plus(new Number(3) , new Mul( new Div(new Number(4), new
     //  Number(2)) , new Number(5)));
