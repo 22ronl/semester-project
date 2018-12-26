@@ -245,7 +245,7 @@ void* ThreadGetPlaneData(void *param) {
 }
 bool valid_value(string& input) {
   for(int i=0 ; i<input.length()-1 ; i++) {
-    if(input[i] != '0' && input[i] != ',' ){
+    if(input[i] != '0' && input[i] != ',' && input[i] !='.' && input[i] != '1' ){
       return true;
     }
   }
