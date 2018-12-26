@@ -353,12 +353,12 @@ void Connect::doCommand() {
     exit(1);
   }
   this->data_Handler->setClientSocket(sockfd);
-  while(true) {
-    cout<< "rpm is : " + to_string(this->data_Handler->rpm)<<endl;
-    if(this->data_Handler->rpm > RPM_MIN_VALUE) {
-      break;
-    }
-  }
+  //while(true) {
+    //cout<< "rpm is : " + to_string(this->data_Handler->rpm)<<endl;
+    //if(this->data_Handler->rpm > RPM_MIN_VALUE) {
+     // break;
+   // }
+ // }
   delete[] write_able;
   this->data_Handler->increaseCurrIndex(NEXT_COMMAND_POS_1);
 }
