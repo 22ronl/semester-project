@@ -19,4 +19,8 @@ class Lexer {
   void print_vector();
 };
 
+vector<string> split(string delimiter ,string& to_split);
+
+
+
 #endif //UTILS_H
