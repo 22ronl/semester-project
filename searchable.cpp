@@ -2,6 +2,7 @@
 // Created by Matan on 08/01/2019.
 //
 
+#include <iostream>
 #include "searchable.h"
 #include "utils.h"
 #define MATRIX_NUM_INDEX 0
@@ -20,7 +21,13 @@ MatrixProblem::MatrixProblem(std::pair<int,int> initial,
   this->matrix_size = size;
   this->matrix_graph = matrix_graph;
 }
-
+MatrixProblem::~MatrixProblem() {
+  for(int i=0; i<this->matrix_size ; ++i) {
+    for(int j=0 ; j< this->matrix_size ;++j) {
+      delete(this->matrix_graph[i][j]);
+    }
+  }
+}
 state_pair MatrixProblem::getInitialState() {
   return *this->matrix_graph[initial_state.first][initial_state.second];
 }
@@ -65,10 +72,11 @@ double getCost(string& cost_string) {
   }
   return stod(cost_string);
 }
-std::vector<MatrixProblem> createMatrixProblem(std::string& file_name) {
+std::vector<MatrixProblem*> createMatrixProblem(std::string& file_name) {
   Lexer lexer(file_name);
-  vector<MatrixProblem> matrix_problems;
+  vector<MatrixProblem*> matrix_problems;
   std::vector<std::string> matrix_string = lexer.get_string_command();
+  MatrixProblem* matrix_problem;
   int matrix_num = stoi(matrix_string[MATRIX_NUM_INDEX]);
   int n;
   std::pair<int,int> initial_index;
@@ -92,7 +100,7 @@ std::vector<MatrixProblem> createMatrixProblem(std::string& file_name) {
         vector_index++;
       }
     }
-    MatrixProblem matrix_problem(initial_index,goal_index,n,matrix_graph);
+    matrix_problem = new MatrixProblem(initial_index,goal_index,n,matrix_graph);
     matrix_problems.push_back(matrix_problem);
   }
   return matrix_problems;

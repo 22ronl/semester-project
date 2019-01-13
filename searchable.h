@@ -13,16 +13,21 @@ template <class T> class State  {
  private:
   T state;
   double cost;
-  State* came_from;
+  State* came_from = nullptr;
  public:
   State(T state) { this->state = state;}
   void setCost(double cost) {this->cost = cost;}
   void setFrom(State * came_form) { this->came_from = came_form;}
+  State<T> getFrom(){ return this->came_from;}
   bool operator== (const State& s);
+  bool operator> (const State& s);
   T getState() { return this->state;}
 };
 template <class T> bool State<T>::operator==(const State &s) {
   return this->state == s.state;
+}
+template <class T> bool State<T>::operator>(const State &s) {
+  return this->cost > s.cost;
 }
 
 template <class T> class Searchable {
@@ -40,6 +45,7 @@ class MatrixProblem : public Searchable<std::pair<int,int>> {
   int matrix_size;
   std::vector<std::vector<state_pair*>> matrix_graph;
  public:
+  ~MatrixProblem();
   MatrixProblem(std::pair<int,int> initial,std::pair<int,int> goal , int size,
                 std::vector<std::vector<state_pair*>> matrix_graph);
   state_pair getInitialState();
@@ -47,7 +53,7 @@ class MatrixProblem : public Searchable<std::pair<int,int>> {
   std::vector<state_pair> getAllPossibleStates(state_pair& s);
 };
 
-std::vector<MatrixProblem> createMatrixProblem(std::string& file_name);
+std::vector<MatrixProblem*> createMatrixProblem(std::string& file_name);
 
 
 
