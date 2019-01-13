@@ -17,7 +17,6 @@ template <class T> class Solution {
     solution.push_back(element);
     std::rotate(solution.rbegin(),solution.rbegin()+1,solution.rend());
   }
-
 };
 
 template<class T>  class Searcher {
@@ -25,8 +24,6 @@ template<class T>  class Searcher {
   virtual Solution<T> search(Searchable<T> searchable) =0;
   virtual int getNumberOfNodesEvaluated()=0;
 };
-
-
 
 template<class T> class BestFirstSearch : public Searcher<T> {
  public:
@@ -57,4 +54,6 @@ template<class T> class BestFirstSearch : public Searcher<T> {
   }
   int getNumberOfNodesEvaluated();
 };
+
+
 #endif //SEMSTERPROJECT_SEARCHER_H
