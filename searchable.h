@@ -13,24 +13,32 @@ template <class T> class State  {
  private:
   T state;
   double cost;
+  double cost_to_get = -1;
   State* came_from = nullptr;
  public:
+  void setCostToGet(double cost_to_get) {this->cost_to_get = cost_to_get;}
+  double getCostToGet(){ return this->cost_to_get;}
   State(T state) { this->state = state;}
   void setCost(double cost) {this->cost = cost;}
+  double getCost(){ return this->cost;}
   void setFrom(State * came_form) { this->came_from = came_form;}
   State<T> getFrom(){ return this->came_from;}
-  bool operator== (const State& s);
-  bool operator> (const State& s);
+  bool operator== (const State& s) {
+    return this->state == s.state;
+  }
+
+  bool operator> (const State& s) const {
+    return this->cost > s.cost;
+  }
+  bool operator< (const State& s) const {
+    return this->cost < s.cost;
+  }
   T getState() { return this->state;}
 };
-template <class T> bool State<T>::operator==(const State &s) {
-  return this->state == s.state;
-}
-template <class T> bool State<T>::operator>(const State &s) {
-  return this->cost > s.cost;
-}
+
 
 template <class T> class Searchable {
+ public:
   virtual State<T> getInitialState() =0;
   virtual bool isGoalState(State<T>& s) =0;
   virtual std::vector<State<T>> getAllPossibleStates(State<T>& s) =0;

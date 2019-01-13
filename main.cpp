@@ -3,29 +3,32 @@
 #include "utils.h"
 #include "parser.h"
 #include "searchable.h"
+#include "searcher.h"
 #include "queue"
 void changeFile(string & file_name);
 #define NUM_OF_ARGV 2
 #define FILE_NAME_INDEX 1
 int main(int argc, char *argv[]) {
 
-  auto cmp = [](int left, int right) { return left  > right ;};
-  std::priority_queue<int, std::vector<int>, decltype(cmp)> q3(cmp);
+  //auto cmp = [](int left, int right) { return left  > right ;};
+  //std::priority_queue<int, std::vector<int>, decltype(cmp)> q3(cmp);
 
-  for(int n : {1,8,5,6,3,4,0,9,7,2}) {
-    q3.push(n);
-  }
+  //for(int n : {1,8,5,6,3,4,0,9,7,2}) {
+   // q3.push(n);
+  //}
 
-  while (!q3.empty()) {
-    std::cout << q3.top() << " ";
-    q3.pop();
-  }
-  std::cout << '\n';
+  //while (!q3.empty()) {
+   // std::cout << q3.top() << " ";
+   // q3.pop();
+  //}
+  //std::cout << '\n';
 
 
-  //string file_name= "matrix.txt";
+  string file_name= "matrix.txt";
   //changeFile(file_name);
-  //vector<MatrixProblem*> mp = createMatrixProblem(file_name);
+  vector<MatrixProblem*> mp = createMatrixProblem(file_name);
+  Searcher<std::pair<int,int>,std::pair<int,int>>* s = new BFS<std::pair<int,int>,std::pair<int,int>>;
+  s->search((mp[0]));
  // state_pair intial_state = mp[0]->getInitialState();
   //vector<state_pair> all_state = mp[0]->getAllPossibleStates(intial_state);
   //for(MatrixProblem* problem : mp) {
