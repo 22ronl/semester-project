@@ -28,30 +28,39 @@ MatrixProblem::~MatrixProblem() {
     }
   }
 }
-state_pair MatrixProblem::getInitialState() {
-  return *this->matrix_graph[initial_state.first][initial_state.second];
+state_pair* MatrixProblem::getInitialState() {
+  return this->matrix_graph[initial_state.first][initial_state.second];
 }
 
-bool MatrixProblem::isGoalState(state_pair &s) {
-  return s == *this->matrix_graph[goal_state.first][goal_state.second];
+bool MatrixProblem::isGoalState(state_pair* &s) {
+  return *s == *this->matrix_graph[goal_state.first][goal_state.second];
 }
 
-std::vector<state_pair> MatrixProblem::getAllPossibleStates(state_pair &s) {
-  std::vector<state_pair> possible_states;
-  std::pair<int,int> node = s.getState();
+std::vector<state_pair*> MatrixProblem::getAllPossibleStates(state_pair* &s) {
+  std::vector<state_pair*> possible_states;
+  std::pair<int,int> node = s->getState();
   int i = node.first;
   int j = node.second;
-  if(j-1 > 0) {
-    possible_states.push_back(*this->matrix_graph[i][j-1]);
+  if(j-1 > 0)  {
+    // -1 is a wall
+    if(this->matrix_graph[i][j-1]->getCost() != -1) {
+      possible_states.push_back(this->matrix_graph[i][j - 1]);
+    }
   }
   if (j+1 <= this->matrix_size -1) {
-    possible_states.push_back(*this->matrix_graph[i][j+1]);
+    if(this->matrix_graph[i][j+1]->getCost() != -1) {
+      possible_states.push_back(this->matrix_graph[i][j + 1]);
+    }
   }
   if (i-1> 0) {
-    possible_states.push_back(*this->matrix_graph[i-1][j]);
+    if(this->matrix_graph[i-1][j]->getCost() != -1) {
+      possible_states.push_back(this->matrix_graph[i - 1][j]);
+    }
   }
   if (i+1 <= this->matrix_size -1) {
-    possible_states.push_back(*this->matrix_graph[i+1][j]);
+    if(this->matrix_graph[i+1][j]->getCost() != -1) {
+      possible_states.push_back(this->matrix_graph[i + 1][j]);
+    }
   }
   return possible_states;
 }

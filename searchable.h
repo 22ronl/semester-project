@@ -22,7 +22,7 @@ template <class T> class State  {
   void setCost(double cost) {this->cost = cost;}
   double getCost(){ return this->cost;}
   void setFrom(State * came_form) { this->came_from = came_form;}
-  State<T> getFrom(){ return this->came_from;}
+  State<T>* getFrom(){ return this->came_from;}
   bool operator== (const State& s) {
     return this->state == s.state;
   }
@@ -39,9 +39,9 @@ template <class T> class State  {
 
 template <class T> class Searchable {
  public:
-  virtual State<T> getInitialState() =0;
-  virtual bool isGoalState(State<T>& s) =0;
-  virtual std::vector<State<T>> getAllPossibleStates(State<T>& s) =0;
+  virtual State<T>* getInitialState() =0;
+  virtual bool isGoalState(State<T>*& s) =0;
+  virtual std::vector<State<T>*> getAllPossibleStates(State<T>*& s) =0;
 };
 
 
@@ -56,9 +56,9 @@ class MatrixProblem : public Searchable<std::pair<int,int>> {
   ~MatrixProblem();
   MatrixProblem(std::pair<int,int> initial,std::pair<int,int> goal , int size,
                 std::vector<std::vector<state_pair*>> matrix_graph);
-  state_pair getInitialState();
-  bool isGoalState(state_pair& s);
-  std::vector<state_pair> getAllPossibleStates(state_pair& s);
+  state_pair* getInitialState();
+  bool isGoalState(state_pair*& s);
+  std::vector<state_pair*> getAllPossibleStates(state_pair*& s);
 };
 
 std::vector<MatrixProblem*> createMatrixProblem(std::string& file_name);
