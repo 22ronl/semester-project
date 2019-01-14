@@ -12,9 +12,9 @@ namespace server_side {
     public:
         void handelClient(int sock_number) {
 
-            string input = s->reciverFromClient(sock_number);
-            input = input.substr(0, input.length()-REMOVE_END);
-            string sol = "";
+  //          string input = s->reciverFromClient(sock_number);
+    //        input = input.substr(0, input.length()-REMOVE_END);
+    //        string sol = "";
         }
     };
 }

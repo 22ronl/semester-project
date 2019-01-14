@@ -1,107 +1,55 @@
-
-#ifndef SEMSTERPROJECT_DFS_H
-#define SEMSTERPROJECT_DFS_H
-#include <cstddef>
-#include <vector>
-#include <string>
-#include <stack>
-#include "searchable.h"
-#include "searcher.h"
-using namespace std;
-
-template<class T>  class DFS : public Searcher<T> {
-
-private:
-    State<T> initial_state;
-    vector<State<T>> visited;
-    int num_of_nodes;
-    bool is_fisrt_iteration = true;
+template <class E ,class T> class DFS : public Searcher<E,T> {
 public:
-    DFS();
+
     int getNumberOfNodesEvaluated() {
-        return this->num_of_nodes;
+        return 1;
     }
 
-    bool isVisited(State<T> state) {
-        for(const auto & iter:this->visited){
-            if(state == iter) {
-                return true;
+    Solution <E> search(Searchable <T> *searchable) {
+
+        Solution <E> solution;
+        std::set <State<T>> visited_nodes;
+        std::stack <State<T>> route; // route to target
+        std::vector <State<T>> adj_nodes;
+
+        State <T> current_node = searchable->getInitialState();
+        //  solution.addSolutionElement(current_node);
+
+        while (!searchable->isGoalState(current_node)) {
+            adj_nodes = searchable->getAllPossibleStates(current_node);
+
+            bool found_non_visited = false;
+
+            for (auto node : adj_nodes) {
+                if (visited_nodes.find(node) == visited_nodes.end()) {
+                    route.push(current_node);
+                    visited_nodes.insert(node);
+                    current_node = node;
+                    found_non_visited = true;
+
+                    break;
+                }
             }
-        }
-        return false;
-    }
 
-    Solution<State<T>> search(Searchable<T> searchable){
-        if(this->is_fisrt_iteration) {
-            this->initial_state = searchable.getInitialState();
-            this->is_fisrt_iteration = false;
-        }
-        if(searchable.isGoalState(this->initial_state)) {
-            return this->visited;
-        }
-
-        this->visited.push_back(this->initial_state);
-        this->num_of_nodes++;
-        std::vector<State<T>> adj_of_v = searchable.getAllPossibleStates(this->initial_state);
-        bool is_path_exist = false;
-        for (const auto & iter:adj_of_v) {
-            if(!isVisited(iter)) {
-                this->initial_state = iter;
-                search(searchable);
-                is_path_exist = true;
+            if (found_non_visited) {
+                continue;
             }
-        }
-        if(!is_path_exist){
-            return -1;
-        }
-    }
-};
-/*
-class DFS : public Searcher<std::pair<int,int>> {
 
-private:
-    State<std::pair<int,int>> initial_state;
-    vector<State<std::pair<int,int>>> visited;
-    int num_of_nodes;
-    bool is_fisrt_iteration = true;
-public:
-    int getNumberOfNodesEvaluated() {
-        return this->num_of_nodes;
-    }
-
-    bool isVisited(State<std::pair<int,int>> state) {
-        for(const auto & iter:this->visited){
-            if(state == iter) {
-                return true;
+            if (route.empty()) {
+                return nullptr;
             }
+            current_node = route.top();
+            route.pop();
         }
-        return false;
-    }
+        // push goal node
+        route.push(current_node);
 
-    vector<State<std::pair<int,int>>> search(MatrixProblem *searchable){
-        if(this->is_fisrt_iteration) {
-            this->initial_state = searchable->getInitialState();
-            this->is_fisrt_iteration = false;
+        int stackSize = route.size();
+        for (int i = 0; i < stackSize; ++i) {
+            solution.addSolutionElement(route.top());
+            route.pop();
         }
-        if(searchable->isGoalState(this->initial_state)) {
-            return this->visited;
-        }
+        return solution;
 
-        this->visited.push_back(this->initial_state);
-        this->num_of_nodes++;
-        std::vector<State<std::pair<int,int>>> adj_of_v = searchable->getAllPossibleStates(this->initial_state);
-        bool is_path_exist = false;
-        for (const auto & iter:adj_of_v) {
-            if(!isVisited(iter)) {
-                this->initial_state = iter;
-                search(searchable);
-                is_path_exist = true;
-            }
-        }
-        if(!is_path_exist){
-           // return -1;
-        }
     }
-};
-*/
-#endif //SEMSTERPROJECT_DFS_H
+}

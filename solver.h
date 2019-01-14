@@ -14,10 +14,10 @@ public:
     virtual Solution solve(Problem problem) = 0;
 };
 
-
+/**
 template<T> class SolverSearcher : public Solver {
 private:
     Searcher<T> s;
 
-};
+};*/
 #endif //SEMSTERPROJECT_SOLVER_H

@@ -11,7 +11,7 @@ class string;
 namespace server_side {
     class Server {
     protected:
-        virtual void start(int port, clientHandler c) = 0;
+//        virtual void start(int port, ClientHandler c) = 0;
         virtual void stop() = 0;
         virtual int getClientSocket(int primeSocket) = 0;
         virtual int getPrimeSocket(int primeSocket) = 0;
