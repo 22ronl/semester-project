@@ -16,6 +16,7 @@ template <class T> class State  {
   double cost_to_get = -1;
   State* came_from = nullptr;
  public:
+
   void setCostToGet(double cost_to_get) {this->cost_to_get = cost_to_get;}
   double getCostToGet(){ return this->cost_to_get;}
   State(T state) { this->state = state;}
@@ -41,6 +42,7 @@ template <class T> class Searchable {
  public:
   virtual State<T>* getInitialState() =0;
   virtual bool isGoalState(State<T>*& s) =0;
+  virtual State<T>* getGoalState()=0;
   virtual std::vector<State<T>*> getAllPossibleStates(State<T>*& s) =0;
 };
 
@@ -59,6 +61,7 @@ class MatrixProblem : public Searchable<std::pair<int,int>> {
   state_pair* getInitialState();
   bool isGoalState(state_pair*& s);
   std::vector<state_pair*> getAllPossibleStates(state_pair*& s);
+  state_pair* getGoalState() { return this->matrix_graph[goal_state.first][goal_state.second]; }
 };
 
 std::vector<MatrixProblem*> createMatrixProblem(std::string& file_name);

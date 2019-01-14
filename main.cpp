@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   string file_name= "matrix.txt";
   //changeFile(file_name);
   vector<MatrixProblem*> mp = createMatrixProblem(file_name);
-  Searcher<std::pair<int,int>,std::pair<int,int>>* s = new BestFirstSearch<std::pair<int,int>,std::pair<int,int>>;
+  Searcher<std::pair<int,int>,std::pair<int,int>>* s = new DFS<std::pair<int,int>,std::pair<int,int>>;
   Solution<std::pair<int,int>> sol = s->search((mp[0]));
   cout<<"the number of nodes :" + to_string(s->getNumberOfNodesEvaluated())<<endl;
   vector<State<std::pair<int,int>>*> v = sol .getSolution();

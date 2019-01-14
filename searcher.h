@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <queue>
 #include <set>
+#include <math.h>
+#include <stack>
 // assume every soultion needs a vetor
 template <class T> class Solution {
  private:
@@ -152,72 +154,137 @@ template<class E ,class T> class BestFirstSearch : public Searcher<E,T> {
 template <class T> struct CompareCost {
  public:
   bool operator()(State<T> * left ,State<T> * right) const {
-    return left->getCost() < right->getCost();
+    return left->getCostToGet() < right->getCostToGet();
   }
 };
 
-
-template <class E ,class T> class BestFirstSearch : public Searcher<E,T> {
+template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
  private:
   int nodesEvaluated = 0;
-  std::multiset<State<T>*,CompareCost<T>> open;
+  std::multiset<State<T> *, CompareCost<T>> open;
+ protected:
+  State<T> *goal_state;
  public:
-  void setPriority(State<T>* vertex) {
-    for(auto & item : open ) {
-      if(item == vertex) {
+  void setPriority(State<T> *vertex) {
+    for (auto &item : open) {
+      if (item == vertex) {
         open.erase(item);
         open.insert(vertex);
       }
     }
   }
-  State<T>* popOpen() {
+  State<T> *popOpen() {
     nodesEvaluated++;
     auto it = open.begin();
-    State<T>* best = *it;
+    State<T> *best = *it;
     open.erase(it);
     return best;
   }
+  virtual double getWeightedCost(State<T> *came_from, State<T> *vertex)=0;
   Solution<E> search(Searchable<T> *searchable) {
-
-    open.insert(searchable->getInitialState());
-    std::set<State<T>*> close;
-    State<T>* curr_state;
-    std::vector<State<T>*> adj;
+    this->goal_state = searchable->getGoalState();
+    State<T> *initialState = searchable->getInitialState();
+    initialState->setCostToGet(initialState->getCost());
+    open.insert(initialState);
+    std::set<State<T> *> close;
+    State<T> *curr_state;
+    std::vector<State<T> *> adj;
     while (!open.empty()) {
       curr_state = popOpen();
       close.insert(curr_state);
-      if(searchable->isGoalState(curr_state)) {
+      if (searchable->isGoalState(curr_state)) {
         return Solution<T>(curr_state);
       }
       adj = searchable->getAllPossibleStates(curr_state);
-      for(auto& vertex : adj) {
-        if(close.find(vertex) == close.end() && open.find(vertex) == open.end()) {
+      for (auto &vertex : adj) {
+        if (close.find(vertex) == close.end() && open.find(vertex) == open.end()) {
           vertex->setFrom(curr_state);
-          vertex->setCostToGet(curr_state->getCostToGet() + vertex->getCost());
+          //vertex->setCostToGet(curr_state->getCostToGet() + vertex->getCost());
+          vertex->setCostToGet(this->getWeightedCost(curr_state,vertex));
           open.insert(vertex);
-        } else if(curr_state->getCostToGet() + vertex->getCost() > vertex->getCostToGet()) {
-          vertex->setCostToGet(curr_state->getCostToGet() + vertex->getCost());
+        } else if (this->getWeightedCost(curr_state,vertex) < vertex->getCostToGet()) {
+          vertex->setCostToGet(this->getWeightedCost(curr_state,vertex));
           vertex->setFrom(curr_state);
-          if(open.find(vertex) == open.end()) {
+          if (open.find(vertex) == open.end()) {
             open.insert(vertex);
           } else {
             this->setPriority(vertex);
           }
         }
-
-
       }
-
     }
-
-
-
-
-
   }
   int getNumberOfNodesEvaluated() {
     return nodesEvaluated;
   }
+};
 
+template <class E ,class T> class BestFirstSearch : public SearcherAlgo<E,T> {
+ private:
+  double getWeightedCost(State<T> *came_from, State<T> *vertex) {
+    return came_from->getCostToGet() + vertex->getCost();
+  }
+};
+
+
+template <class E ,class T> class Astar : public SearcherAlgo<E,T> {
+ private:
+  double getWeightedCost(State<T> *came_from, State<T> *vertex) {
+    double vertex_x = vertex->getState().first;
+    double vertex_y = vertex->getState().second;
+    double goal_x = this->goal_state->getState().first;
+    double goal_y = this->goal_state->getState().second;
+    double aerial_dis = sqrt(pow(vertex_x - goal_x,2) + pow(vertex_y -goal_y,2));
+    return came_from->getCostToGet() + vertex->getCost() +aerial_dis ;
+  }
+};
+template <class E ,class T> class DFS : public Searcher<E,T>{
+ private:
+  int nodesEvaluated=0;
+ public:
+
+  int getNumberOfNodesEvaluated() {
+    return nodesEvaluated;
+  }
+
+  Solution <E> search(Searchable <T> *searchable) {
+
+    std::set <State<T>*> visited_nodes;
+    std::stack <State<T>*> route; // route to target
+    std::vector <State<T>*> adj_nodes;
+
+    State <T>* current_node = searchable->getInitialState();
+    nodesEvaluated = 1;
+    while (!searchable->isGoalState(current_node)) {
+      adj_nodes = searchable->getAllPossibleStates(current_node);
+
+      bool found_non_visited = false;
+      for (auto node : adj_nodes) {
+        if (visited_nodes.find(node) == visited_nodes.end()) {
+          nodesEvaluated++;
+          if(searchable->isGoalState(node)) {
+            node->setFrom(current_node);
+            return Solution<E>(node);
+          }
+          node->setFrom(current_node);
+          route.push(current_node);
+          visited_nodes.insert(node);
+          current_node = node;
+          found_non_visited = true;
+          break;
+        }
+      }
+
+      if (found_non_visited) {
+        continue;
+      }
+
+      if (route.empty()) {
+        return nullptr;
+      }
+      current_node = route.top();
+      route.pop();
+    }
+  }
 };
 #endif //SEMSTERPROJECT_SEARCHER_H

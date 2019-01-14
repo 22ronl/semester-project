@@ -4,6 +4,6 @@ project(semsterProject)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(semsterProject main.cpp commands.cpp  expression.cpp
-                maps.cpp parser.cpp  utils.cpp command_expression.h plane_data.h searchable.cpp searcher.cpp searcher.h DFS.h clientHandler.h server.h cacheHandler.h solver.h clientHandler.cpp server.cpp)
+                maps.cpp parser.cpp  utils.cpp command_expression.h plane_data.h searchable.cpp searcher.cpp searcher.h clientHandler.h server.h cacheHandler.h solver.h clientHandler.cpp server.cpp)
 
 set(CMAKE_CXX_FLAGS -pthread)
