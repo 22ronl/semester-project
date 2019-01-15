@@ -8,6 +8,7 @@
 #include <map>
 #include <mutex>
 template <class Solution ,class Problem> class CacheManager {
+public:
   virtual bool isProblemExist(Problem)=0;
   virtual void save(Problem ,Solution) =0;
   virtual Solution getSolution(Problem)=0;

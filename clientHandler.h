@@ -22,7 +22,7 @@
 class ClientHandler {
 public:
     virtual void handelClient(int sock_number) = 0;
-    virtual MatrixProblem * createProblem(std::string& user_input )=0;
+    //virtual MatrixProblem * createProblem(std::string& user_input )=0;
     virtual bool handels()=0;
 };
 
@@ -64,7 +64,8 @@ template <class Solution ,class Problem >
         input.erase(0,i+1);
         return values;
       }
-      MatrixProblem * createProblem(std::string& user_input ) {
+      MatrixProblem * createProblem(std::string& user_input ,int num ) {
+        send(num,user_input.c_str(),user_input.size(),0);
         std::pair<int,int> initial;
         std::pair<int,int> goal;
         std::string input_end;
@@ -88,6 +89,7 @@ template <class Solution ,class Problem >
         goal.first = (int) values[STATE_FIRST];
         goal.second= (int) values[STATE_SECOND];
         input_end.erase();
+
         int row =0;
         while (!user_input.empty()) {
           values =  parseStringToInt(user_input);
@@ -132,8 +134,13 @@ template <class Solution ,class Problem >
           //std::cout<<"in handle c";
           // remmber to check if problem exists
           std::string input = this->readClient(sock_number);
-          MatrixProblem *m = this->createProblem(input);
+          MatrixProblem *m = this->createProblem(input ,sock_number);
+          while(true) {
+
+          }
+          send(sock_number,input.c_str(),input.size(),0);
           Solution solution = this->solver->solve(m);
+          std::cout<<"solved";
           this->cache_manager->save(m,solution);
          std::vector<State<std::pair<int,int>>*> solution_v =  solution->getSolution();
          std::string path;
@@ -141,7 +148,7 @@ template <class Solution ,class Problem >
            path += " ";
            path+= std::to_string(node->getCost());
          }
-          send(sock_number,path.c_str(),input.size(),0);
+          send(sock_number,path.c_str(),path.size(),0);
           //this->still_handle= false;
       }
 
