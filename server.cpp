@@ -48,16 +48,18 @@ void* OpenClientsSockets(void *sockfd_in) {
   clilen = sizeof(cli_addr);
   std::vector<pthread_t*> threads;
   pthread_t* t;
-  newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, (socklen_t*)&clilen);
-  if (newsockfd < 0) {
-    perror("ERROR on accept");
-    exit(1);
-  }
-  //while (true) {
+  while (true) {
+    newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
+    if (newsockfd < 0) {
+      perror("ERROR on accept");
+      exit(1);
+    }
+    //while (true) {
     t = new pthread_t;
-   // threads.push_back(t);
+    threads.push_back(t);
     pthread_create(t, nullptr, ClientSocket, (void *) &newsockfd);
-  //}
+    //}
+  }
   std::cout<<"in open clients sockets"<<std::endl;
 }
 
