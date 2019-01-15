@@ -5,16 +5,39 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 #include <strings.h>
 #include <iostream>
 #include <vector>
 #include <string>
+#define BUFFER_SIZE 1024
 
-
-void* ClientSocket(void *num){
-  int* n = (int*) num;
-  std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
+void* ClientSocket(void *sockfd){
+  int newsockfd =  *((int*) sockfd);
+  //std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
+  char buffer[BUFFER_SIZE];
+  int n;
+  std::string input;
+  std::string curr_input;
+  bool get_input=true;
+  while (get_input) {
+    bzero(buffer, BUFFER_SIZE);
+    n = read(newsockfd, buffer, BUFFER_SIZE - 1);
+    if (n < 0) {
+      perror("ERROR reading from socket");
+      exit(1);
+    }
+    curr_input = buffer;
+    if (curr_input.find("end") != std::string::npos) {
+      get_input = false;
+    }
+    input += curr_input;
+  }
+  //char input_char[input.size()]
+  send(newsockfd,input.c_str(),input.size(),0);
+  std::cout<<input;
 }
+
 
 
 void* OpenClientsSockets(void *sockfd_in) {
