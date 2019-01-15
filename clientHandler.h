@@ -5,15 +5,15 @@
 #ifndef SEMSTERPROJECT_CLIENTHANDLER_H
 #define SEMSTERPROJECT_CLIENTHANDLER_H
 
-#include "cacheHandler.h"
-#include "server.h"
-#include "solver.h"
-#include <string>
+//#include "cacheHandler.h"
+//#include "server.h"
+//#include "solver.h"
+//#include <string>
 
-class ClientHandler {
-public:
-    virtual void handelClient(int sock_number) = 0;
-};
+//class ClientHandler {
+//public:
+  //  virtual void handelClient(int sock_number) = 0;
+//};
 
 
 #endif //SEMSTERPROJECT_CLIENTHANDLER_H

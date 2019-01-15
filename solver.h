@@ -14,10 +14,11 @@ public:
     virtual Solution solve(Problem problem) = 0;
 };
 
-/**
-template<T> class SolverSearcher : public Solver {
-private:
-    Searcher<T> s;
 
-};*/
+template< class E ,class T> class SolverSearcher : public Solver<Solution<E>,Searchable<T>*> {
+private:
+    Searcher<E,T> s;
+public:
+    Solution<E> solve(Searchable<T>* searchable);
+};
 #endif //SEMSTERPROJECT_SOLVER_H

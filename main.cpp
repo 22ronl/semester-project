@@ -5,6 +5,8 @@
 #include "searchable.h"
 #include "searcher.h"
 #include "queue"
+#include "server.h"
+
 void changeFile(string & file_name);
 #define NUM_OF_ARGV 2
 #define FILE_NAME_INDEX 1
@@ -23,14 +25,16 @@ int main(int argc, char *argv[]) {
   //}
   //std::cout << '\n';
 
-
-  string file_name= "matrix.txt";
+  server_side::Server* s = new MyParallelServer();
+  s->open(5400);
+  //string file_name= "matrix.txt";
   //changeFile(file_name);
-  vector<MatrixProblem*> mp = createMatrixProblem(file_name);
-  Searcher<std::pair<int,int>,std::pair<int,int>>* s = new DFS<std::pair<int,int>,std::pair<int,int>>;
-  Solution<std::pair<int,int>> sol = s->search((mp[0]));
-  cout<<"the number of nodes :" + to_string(s->getNumberOfNodesEvaluated())<<endl;
-  vector<State<std::pair<int,int>>*> v = sol .getSolution();
+  //vector<MatrixProblem*> mp = createMatrixProblem(file_name);
+  //Searcher<std::pair<int,int>,std::pair<int,int>>* s = new DFS<std::pair<int,int>,std::pair<int,int>>;
+  //Solution<std::pair<int,int>> sol = s->search((mp[0]));
+  //cout<<"the number of nodes :" + to_string(s->getNumberOfNodesEvaluated())<<endl;
+  //vector<State<std::pair<int,int>>*> v = sol .getSolution();
+  //Ser
  // state_pair intial_state = mp[0]->getInitialState();
   //vector<state_pair> all_state = mp[0]->getAllPossibleStates(intial_state);
   //for(MatrixProblem* problem : mp) {
