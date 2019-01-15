@@ -15,15 +15,16 @@
 
 MatrixProblem::MatrixProblem(std::pair<int,int> initial,
                              std::pair<int,int> goal,
-                             int size,
+                             int row_num, int col_num,
                              std::vector<std::vector<state_pair*>> matrix_graph) :
                              initial_state(initial) , goal_state(goal){
-  this->matrix_size = size;
+  this->row_num = row_num;
+  this->col_num =col_num;
   this->matrix_graph = matrix_graph;
 }
 MatrixProblem::~MatrixProblem() {
-  for(int i=0; i<this->matrix_size ; ++i) {
-    for(int j=0 ; j< this->matrix_size ;++j) {
+  for(int i=0; i<this->row_num ; ++i) {
+    for(int j=0 ; j< this->col_num ;++j) {
       delete(this->matrix_graph[i][j]);
     }
   }
@@ -47,7 +48,7 @@ std::vector<state_pair*> MatrixProblem::getAllPossibleStates(state_pair* &s) {
       possible_states.push_back(this->matrix_graph[i][j - 1]);
     }
   }
-  if (j+1 <= this->matrix_size -1) {
+  if (j+1 <= this->col_num -1) {
     if(this->matrix_graph[i][j+1]->getCost() != -1) {
       possible_states.push_back(this->matrix_graph[i][j + 1]);
     }
@@ -57,7 +58,7 @@ std::vector<state_pair*> MatrixProblem::getAllPossibleStates(state_pair* &s) {
       possible_states.push_back(this->matrix_graph[i - 1][j]);
     }
   }
-  if (i+1 <= this->matrix_size -1) {
+  if (i+1 <= this->row_num -1) {
     if(this->matrix_graph[i+1][j]->getCost() != -1) {
       possible_states.push_back(this->matrix_graph[i + 1][j]);
     }
@@ -109,7 +110,7 @@ std::vector<MatrixProblem*> createMatrixProblem(std::string& file_name) {
         vector_index++;
       }
     }
-    matrix_problem = new MatrixProblem(initial_index,goal_index,n,matrix_graph);
+    matrix_problem = new MatrixProblem(initial_index,goal_index,n,n,matrix_graph);
     matrix_problems.push_back(matrix_problem);
   }
   return matrix_problems;

@@ -52,11 +52,12 @@ class MatrixProblem : public Searchable<std::pair<int,int>> {
  private:
   std::pair<int,int> initial_state;
   std::pair<int,int> goal_state;
-  int matrix_size;
+  int row_num;
+  int col_num;
   std::vector<std::vector<state_pair*>> matrix_graph;
  public:
   ~MatrixProblem();
-  MatrixProblem(std::pair<int,int> initial,std::pair<int,int> goal , int size,
+  MatrixProblem(std::pair<int,int> initial,std::pair<int,int> goal , int row_num,int col_num,
                 std::vector<std::vector<state_pair*>> matrix_graph);
   state_pair* getInitialState();
   bool isGoalState(state_pair*& s);
