@@ -226,6 +226,7 @@ void* ThreadGetPlaneData(void *param) {
     updateData(buffer, params->d_h, n);
   }
   delete params;
+  return NULL;
 }
 
 bool valid_value(string& input) {

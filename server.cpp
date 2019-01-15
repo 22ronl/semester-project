@@ -16,10 +16,13 @@ struct Param {
   int port_num;
 };
 void* ClientSocket(void *param){
+  std::cout<<"in client socket"<<std::endl;
   auto params = (struct Param*) param;
   auto port_num = params->port_num;
   auto c_h = params->c_h;
   c_h->handelClient(port_num);
+  std::cout<<"after call handle"<<std::endl;
+
   //int newsockfd =  *((int*) sockfd);
   //std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
   //char buffer[BUFFER_SIZE];
@@ -62,13 +65,18 @@ void* OpenClientsSockets(void *param) {
       exit(1);
     }
     //while (true) {
+    std::cout << "after accept" << std::endl;
+    //params->c_h->handelClient(54);
     t = new pthread_t;
     threads.push_back(t);
-    params->port_num=newsockfd;
-    pthread_create(t, nullptr, ClientSocket, (void *) &params);
+    params->port_num = newsockfd;
+    std::cout << params->port_num << std::endl;
+    pthread_create(t, nullptr, ClientSocket, (void *) params);
+    //}
     //}
   }
-  std::cout<<"in open clients sockets"<<std::endl;
+  //std::cout<<"in open clients sockets"<<std::endl;
+
 }
 
 
@@ -98,9 +106,10 @@ void MyParallelServer::open(int port ,ClientHandler* client_handler) {
   */
   listen(sockfd,SOMAXCONN);
   auto * params = new Param;
-  params->port_num = port;
+  params->port_num = sockfd;
   params->c_h = client_handler;
   pthread_t t1;
+  std::cout<<"before thread"<<std::endl;
   pthread_create(&t1, nullptr,OpenClientsSockets,(void*) params);
   while (true) {
 

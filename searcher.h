@@ -35,7 +35,7 @@ template <class T> class Solution {
 
 template<class E,class T>  class Searcher {
  public:
-  virtual Solution<E> search(Searchable<T>* searchable) =0;
+  virtual Solution<E>* search(Searchable<T>* searchable) =0;
   virtual int getNumberOfNodesEvaluated()=0;
 };
 
@@ -63,7 +63,7 @@ template <class E ,class T> class BFS : public Searcher<E,T> {
           ++nodesEvaluated;
           if(searchable->isGoalState(vertex)) {
             vertex->setFrom(curr_state);
-            return Solution<E>(vertex);
+            return new Solution<E>(vertex);
           }
           vertex->setFrom(curr_state);
           visited.insert(vertex);
@@ -181,7 +181,7 @@ template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
     return best;
   }
   virtual double getWeightedCost(State<T> *came_from, State<T> *vertex)=0;
-  Solution<E> search(Searchable<T> *searchable) {
+  Solution<E>* search(Searchable<T> *searchable) {
     this->goal_state = searchable->getGoalState();
     State<T> *initialState = searchable->getInitialState();
     initialState->setCostToGet(initialState->getCost());
@@ -193,7 +193,7 @@ template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
       curr_state = popOpen();
       close.insert(curr_state);
       if (searchable->isGoalState(curr_state)) {
-        return Solution<T>(curr_state);
+        return new Solution<T>(curr_state);
       }
       adj = searchable->getAllPossibleStates(curr_state);
       for (auto &vertex : adj) {
