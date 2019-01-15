@@ -15,10 +15,13 @@ public:
 };
 
 
-template< class E ,class T> class SolverSearcher : public Solver<Solution<E>,Searchable<T>*> {
+template<class Problem ,class Solution ,class E, class T > class SolverSearcher : public Solver<Problem, Solution> {
 private:
-    Searcher<E,T> s;
+    Searcher<E,T>* s;
 public:
-    Solution<E> solve(Searchable<T>* searchable);
+    SolverSearcher(Searcher<E,T>* searcher) {this->s =searcher;}
+    Solution solve(Problem searchable) {
+      return s->search(searchable);
+    }
 };
 #endif //SEMSTERPROJECT_SOLVER_H

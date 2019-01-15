@@ -11,38 +11,45 @@
 #include <vector>
 #include <string>
 #define BUFFER_SIZE 1024
-
-void* ClientSocket(void *sockfd){
-  int newsockfd =  *((int*) sockfd);
+struct Param {
+  ClientHandler * c_h;
+  int port_num;
+};
+void* ClientSocket(void *param){
+  auto params = (struct Param*) param;
+  auto port_num = params->port_num;
+  auto c_h = params->c_h;
+  c_h->handelClient(port_num);
+  //int newsockfd =  *((int*) sockfd);
   //std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
-  char buffer[BUFFER_SIZE];
-  int n;
-  std::string input;
-  std::string curr_input;
-  bool get_input=true;
-  while (get_input) {
-    bzero(buffer, BUFFER_SIZE);
-    n = read(newsockfd, buffer, BUFFER_SIZE - 1);
-    if (n < 0) {
-      perror("ERROR reading from socket");
-      exit(1);
-    }
-    curr_input = buffer;
-    if (curr_input.find("end") != std::string::npos) {
-      get_input = false;
-    }
-    input += curr_input;
-  }
+  //char buffer[BUFFER_SIZE];
+  //int n;
+  //std::string input;
+  //std::string curr_input;
+  //bool get_input=true;
+  //while (get_input) {
+   // bzero(buffer, BUFFER_SIZE);
+   // n = read(newsockfd, buffer, BUFFER_SIZE - 1);
+   // if (n < 0) {
+    //  perror("ERROR reading from socket");
+     // exit(1);
+    //}
+    //curr_input = buffer;
+    //if (curr_input.find("end") != std::string::npos) {
+      //get_input = false;
+    //}
+    //input += curr_input;
+  //}
   //char input_char[input.size()]
-  send(newsockfd,input.c_str(),input.size(),0);
-  std::cout<<input;
+  //send(newsockfd,input.c_str(),input.size(),0);
+  //std::cout<<input;
 }
 
 
 
-void* OpenClientsSockets(void *sockfd_in) {
-  //auto params = (struct Params*) param;
-  int sockfd = *((int*) sockfd_in);
+void* OpenClientsSockets(void *param) {
+  auto params = (struct Param*) param;
+  int sockfd = params->port_num;
   int  clilen , newsockfd;
   struct sockaddr_in  cli_addr;
   clilen = sizeof(cli_addr);
@@ -57,14 +64,15 @@ void* OpenClientsSockets(void *sockfd_in) {
     //while (true) {
     t = new pthread_t;
     threads.push_back(t);
-    pthread_create(t, nullptr, ClientSocket, (void *) &newsockfd);
+    params->port_num=newsockfd;
+    pthread_create(t, nullptr, ClientSocket, (void *) &params);
     //}
   }
   std::cout<<"in open clients sockets"<<std::endl;
 }
 
 
-void MyParallelServer::open(int port) {
+void MyParallelServer::open(int port ,ClientHandler* client_handler) {
 
   int sockfd, portno;
   struct sockaddr_in serv_addr;
@@ -89,9 +97,11 @@ void MyParallelServer::open(int port) {
      * go in sleep mode and will wait for the incoming connection
   */
   listen(sockfd,SOMAXCONN);
-
+  auto * params = new Param;
+  params->port_num = port;
+  params->c_h = client_handler;
   pthread_t t1;
-  pthread_create(&t1, nullptr,OpenClientsSockets,(void*) &sockfd);
+  pthread_create(&t1, nullptr,OpenClientsSockets,(void*) params);
   while (true) {
 
   }

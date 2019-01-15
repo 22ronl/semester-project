@@ -6,7 +6,9 @@
 #include "searcher.h"
 #include "queue"
 #include "server.h"
-
+#include "clientHandler.h"
+#include "cacheHandler.h"
+#include "solver.h"
 void changeFile(string & file_name);
 #define NUM_OF_ARGV 2
 #define FILE_NAME_INDEX 1
@@ -24,9 +26,13 @@ int main(int argc, char *argv[]) {
    // q3.pop();
   //}
   //std::cout << '\n';
-
+typedef std::pair<int,int> pair;
   server_side::Server* s = new MyParallelServer();
-  s->open(5400);
+  Searcher<pair,pair> * searcher = new BestFirstSearch<pair,pair>();
+  Solver<Searchable<pair>*,Solution<pair>*> *solver = new SolverSearcher<Searchable<pair>*,Solution<pair>* ,pair,pair>(searcher);
+  CacheManager<Solution<pair>* ,Searchable<pair>*>* cacheManager = new FileCacheManager<pair,pair>;
+  ClientHandler *c = new MyClientHandler<Solution<pair>* ,Searchable<pair>* ,pair,pair >(cacheManager,solver);
+  s->open(5400,c);
   //string file_name= "matrix.txt";
   //changeFile(file_name);
   //vector<MatrixProblem*> mp = createMatrixProblem(file_name);
