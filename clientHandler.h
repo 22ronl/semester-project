@@ -32,14 +32,14 @@ public:
 
 
 
-template <class Solution ,class Problem >
+template <class Solution ,class Problem , class T , class E >
     class MyClientHandler : public ClientHandler {
      private:
-      CacheManager<Solution,Problem>* cache_manager;
+      CacheManager<T,E>* cache_manager;
       Solver<Problem,Solution>* solver;
       bool still_handle=true;
      public:
-        MyClientHandler(CacheManager<Solution,Problem> *cache_manager ,Solver<Problem,Solution>* solver) {
+        MyClientHandler(CacheManager<T,E> *cache_manager ,Solver<Problem,Solution>* solver) {
           this->cache_manager = cache_manager;
           this->solver = solver;
       }
@@ -173,11 +173,11 @@ template <class Solution ,class Problem >
           MatrixProblem *m = this->createProblem(input);
           //send(sock_number,input.c_str(),input.size(),0);
           Solution solution = this->solver->solve(m);
-          std::cout << "solved";
-          this->cache_manager->save(m, solution);
+          //std::cout << "solved";
+          //this->cache_manager->save(m, solution);
           std::vector<State<std::pair<int, int>> *> solution_v = solution->getSolution();
           path = this->getStringPath(solution_v);
-          this->cache_manager->save(backup_input,path);
+          //this->cache_manager->save(backup_input,path);
           //std::string path;
           //for(auto node : solution_v) {
           // path += " ";
@@ -188,6 +188,7 @@ template <class Solution ,class Problem >
 
         } else {
           path = this->cache_manager->getSolution(input);
+          std::cout<<path;
         }
         send(sock_number, path.c_str(), path.size(), 0);
       }

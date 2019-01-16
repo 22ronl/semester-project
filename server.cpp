@@ -132,14 +132,14 @@ void* OpenClientsSockets(void *param) {
 
 
 
-    for(auto thread: threads) {
-      pthread_join(*thread,NULL);
-      delete(thread);
-    }
-  for(auto socket_num : sockets) {
-    close(socket_num);
-  }
-  close(sockfd);
+  //  for(auto thread: threads) {
+    //  pthread_join(*thread,NULL);
+    //  delete(thread);
+   // }
+  //for(auto socket_num : sockets) {
+   // close(socket_num);
+ // }
+  //close(sockfd);
 
   params->thread_mutex->lock();
   *params->handles_clients =1;
@@ -188,7 +188,7 @@ void MyParallelServer::open(int port ,ClientHandler* client_handler) {
   pthread_create(&t1, nullptr,OpenClientsSockets,(void*) params);
   while (true) {
     thread_mutex.lock();
-    if(*handles_clients) {
+    if(*handles_clients == 1) {
       std::cout<<"break loop in open"<<std::endl;
       break;
     }
