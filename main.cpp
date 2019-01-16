@@ -34,6 +34,7 @@ typedef std::pair<int,int> pair;
   ClientHandler *c = new MyClientHandler<Solution<pair>* ,Searchable<pair>* >(cacheManager,solver);
   s->open(5401,c);
   //string string_1 = "1,2\n 4,5\n 0,0\n 1,1\n end \n";
+  //c->handelClient(1,string_1);
   //MatrixProblem* m =c->createProblem(string_1);
   //string file_name= "matrix.txt";
   //changeFile(file_name);

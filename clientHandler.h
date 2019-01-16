@@ -23,7 +23,7 @@ class ClientHandler {
 public:
     virtual void handelClient(int sock_number) = 0;
     //virtual MatrixProblem * createProblem(std::string& user_input )=0;
-    virtual bool handels()=0;
+    //virtual bool handels()=0;
 };
 
 
@@ -61,11 +61,16 @@ template <class Solution ,class Problem >
           values.push_back(stol(temp_num));
           temp_num.clear();
         }
+        if(i < input.size() -1 ) {
+          if(input[i+1] == END_OF_LINE_UNIX){
+            ++i;
+          }
+        }
         input.erase(0,i+1);
         return values;
       }
-      MatrixProblem * createProblem(std::string& user_input ,int num ) {
-        send(num,user_input.c_str(),user_input.size(),0);
+      MatrixProblem * createProblem(std::string& user_input) {
+        //send(num,user_input.c_str(),user_input.size(),0);
         std::pair<int,int> initial;
         std::pair<int,int> goal;
         std::string input_end;
@@ -77,9 +82,19 @@ template <class Solution ,class Problem >
           if(user_input[i] == END_OF_LINE_MAC ||
               user_input[i] == END_OF_LINE_UNIX) {
             ++num_of_line_end;
+            if(user_input[i-1] == END_OF_LINE_MAC ||
+                user_input[i-1] == END_OF_LINE_UNIX) {
+              --i;
+            }
           }
           --i;
         }
+        if(user_input[i+1] == END_OF_LINE_MAC &&
+            user_input[i+2] == END_OF_LINE_UNIX) {
+          ++i;
+        }
+
+
         input_end = user_input.substr(i+INITIAL_STATE_INDEX,user_input.length()-i );
         user_input.erase(i+INITIAL_STATE_INDEX,user_input.length()-i);
         std::vector<double> values = parseStringToInt(input_end);
@@ -134,11 +149,8 @@ template <class Solution ,class Problem >
           //std::cout<<"in handle c";
           // remmber to check if problem exists
           std::string input = this->readClient(sock_number);
-          MatrixProblem *m = this->createProblem(input ,sock_number);
-          while(true) {
-
-          }
-          send(sock_number,input.c_str(),input.size(),0);
+          MatrixProblem *m = this->createProblem(input);
+          //send(sock_number,input.c_str(),input.size(),0);
           Solution solution = this->solver->solve(m);
           std::cout<<"solved";
           this->cache_manager->save(m,solution);
