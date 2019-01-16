@@ -47,7 +47,7 @@ template <class E ,class T> class BFS : public Searcher<E,T> {
  private:
   int nodesEvaluated=0;
  public:
-  Solution<E> search(Searchable<T>* searchable) {
+  Solution<E>* search(Searchable<T>* searchable) {
     // 1 for source
     nodesEvaluated=1;
     //Solution<E> solution;
@@ -164,7 +164,7 @@ template <class T> struct CompareCost {
 
 template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
  private:
-  int nodesEvaluated = 0;
+  int nodesEvaluated ;
   std::multiset<State<T> *, CompareCost<T>> open;
  protected:
   State<T> *goal_state;
@@ -186,6 +186,7 @@ template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
   }
   virtual double getWeightedCost(State<T> *came_from, State<T> *vertex)=0;
   Solution<E>* search(Searchable<T> *searchable) {
+    nodesEvaluated=1;
     this->goal_state = searchable->getGoalState();
     State<T> *initialState = searchable->getInitialState();
     initialState->setCostToGet(initialState->getCost());
@@ -217,6 +218,7 @@ template <class E ,class T> class SearcherAlgo : public Searcher<E,T> {
         }
       }
     }
+    return nullptr;
   }
   int getNumberOfNodesEvaluated() {
     return nodesEvaluated;
@@ -244,14 +246,14 @@ template <class E ,class T> class Astar : public SearcherAlgo<E,T> {
 };
 template <class E ,class T> class DFS : public Searcher<E,T>{
  private:
-  int nodesEvaluated=0;
+  int nodesEvaluated;
  public:
 
   int getNumberOfNodesEvaluated() {
     return nodesEvaluated;
   }
 
-  Solution <E> search(Searchable <T> *searchable) {
+  Solution <E>* search(Searchable <T> *searchable) {
 
     std::set <State<T>*> visited_nodes;
     std::stack <State<T>*> route; // route to target
@@ -268,7 +270,7 @@ template <class E ,class T> class DFS : public Searcher<E,T>{
           nodesEvaluated++;
           if(searchable->isGoalState(node)) {
             node->setFrom(current_node);
-            return Solution<E>(node);
+            return new Solution<E>(node);
           }
           node->setFrom(current_node);
           route.push(current_node);
