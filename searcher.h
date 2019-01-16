@@ -22,15 +22,19 @@ template <class T> class Solution {
   void addSolutionElement(State<T>* element) {
     solution.push_back(element);
     std::rotate(solution.rbegin(),solution.rbegin()+1,solution.rend());
-    }
+  }
+  void createSolution() {
+      State<T>* curr_state = goal;
+      do {
+        this->addSolutionElement(curr_state);
+        curr_state = curr_state->getFrom();
+      } while (curr_state != nullptr);
+  }
   std::vector<State<T>*> getSolution() {
-    State<T>* curr_state = goal;
-    do {
-      this->addSolutionElement(curr_state);
-      curr_state = curr_state->getFrom();
-    } while (curr_state != nullptr);
+    this->createSolution();
     return solution;
   }
+
 };
 
 template<class E,class T>  class Searcher {

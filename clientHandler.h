@@ -19,6 +19,7 @@
 #define INITIAL_STATE_INDEX 2
 #define STATE_FIRST 0
 #define STATE_SECOND 1
+#define PATH_END_SIZE 2
 class ClientHandler {
 public:
     virtual void handelClient(int sock_number) = 0;
@@ -142,24 +143,43 @@ template <class Solution ,class Problem >
           }
           return input;
       }
-      bool handels() {
-          return still_handle;
+      std::string getStringPath(std::vector<State<std::pair<int,int>>*> solution) {
+        std:: string path;
+        std::pair<int,int> node;
+        std::pair<int,int> next_node;
+        for(int i=0 ; i<solution.size()-1;i++) {
+          node = solution[i]->getState();
+          next_node = solution[i+1]->getState();
+          if(next_node.first == node.first +1) {
+            path+= "Down, ";
+          } else if(next_node.first +1 == node.first) {
+            path+= "UP, ";
+          } else if (next_node.second +1 == node.second) {
+            path+= "Left, ";
+          } else {
+            path+= "Right, ";
+          }
         }
+        path = path.substr(0,path.length()-PATH_END_SIZE);
+        return path;
+      }
       void handelClient(int sock_number){
           //std::cout<<"in handle c";
           // remmber to check if problem exists
           std::string input = this->readClient(sock_number);
+          std::string path;
           MatrixProblem *m = this->createProblem(input);
           //send(sock_number,input.c_str(),input.size(),0);
           Solution solution = this->solver->solve(m);
           std::cout<<"solved";
           this->cache_manager->save(m,solution);
          std::vector<State<std::pair<int,int>>*> solution_v =  solution->getSolution();
-         std::string path;
-         for(auto node : solution_v) {
-           path += " ";
-           path+= std::to_string(node->getCost());
-         }
+         path =this->getStringPath(solution_v);
+         //std::string path;
+         //for(auto node : solution_v) {
+          // path += " ";
+           //path+= std::to_string(node->getCost());
+        // }
           send(sock_number,path.c_str(),path.size(),0);
           //this->still_handle= false;
       }
