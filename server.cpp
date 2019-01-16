@@ -10,19 +10,28 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fcntl.h>
+#define TIME_OUT 10
 #define BUFFER_SIZE 1024
 struct Param {
   ClientHandler * c_h;
   int port_num;
+  bool * handles_clients;
+};
+
+struct ParamClient {
+  ClientHandler * c_h;
+  int socket_num;
+  bool * is_open;
 };
 void* ClientSocket(void *param){
   std::cout<<"in client socket"<<std::endl;
-  auto params = (struct Param*) param;
-  auto port_num = params->port_num;
+  auto params = (struct ParamClient*) param;
+  auto socket_num = params->socket_num;
   auto c_h = params->c_h;
-  c_h->handelClient(port_num);
+  c_h->handelClient(socket_num);
   std::cout<<"after call handle"<<std::endl;
-
+  *params->is_open = false;
   //int newsockfd =  *((int*) sockfd);
   //std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
   //char buffer[BUFFER_SIZE];
@@ -52,28 +61,73 @@ void* ClientSocket(void *param){
 
 void* OpenClientsSockets(void *param) {
   auto params = (struct Param*) param;
+  ParamClient* param_client = new ParamClient;
   int sockfd = params->port_num;
   int  clilen , newsockfd;
   struct sockaddr_in  cli_addr;
   clilen = sizeof(cli_addr);
   std::vector<pthread_t*> threads;
+  std::vector<int> sockets;
+  std::vector<bool*> is_thread_open;
+  bool* thread_open;
+  bool first_client=true;
   pthread_t* t;
   while (true) {
+    if(!first_client) {
+      sleep(TIME_OUT);
+
+    }
     newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
+    if(first_client) {
+      first_client = false;
+      fcntl(sockfd,F_SETFL,O_NONBLOCK);
+    }
     if (newsockfd < 0) {
-      perror("ERROR on accept");
-      exit(1);
+      break;
     }
     //while (true) {
     std::cout << "after accept" << std::endl;
     //params->c_h->handelClient(54);
     t = new pthread_t;
     threads.push_back(t);
-    params->port_num = newsockfd;
-    std::cout << params->port_num << std::endl;
-    pthread_create(t, nullptr, ClientSocket, (void *) params);
+    sockets.push_back(newsockfd);
+    thread_open = new bool;
+    *thread_open = true;
+    is_thread_open.push_back(thread_open);
+    param_client->is_open = thread_open;
+    param_client->socket_num = newsockfd;
+    param_client->c_h = params->c_h;
+    //std::cout << params->port_num << std::endl;
+    pthread_create(t, nullptr, ClientSocket, (void *) param_client);
     //}
     //}
+  }
+  bool threads_finished = false;
+  while (true) {
+    for (auto thread : is_thread_open) {
+      if(thread) {
+        threads_finished = false;
+        break;
+      } else {
+        threads_finished = true;
+      }
+    }
+    if(threads_finished) {
+      break;
+    }
+
+    for(auto socket_num : sockets) {
+      close(socket_num);
+    }
+    close(sockfd);
+    for(auto thread: threads) {
+      pthread_join(*thread,NULL);
+      delete(thread);
+    }
+    for(auto is_open :is_thread_open) {
+      delete (is_open);
+    }
+    *params->handles_clients = false;
   }
   //std::cout<<"in open clients sockets"<<std::endl;
 
@@ -108,10 +162,14 @@ void MyParallelServer::open(int port ,ClientHandler* client_handler) {
   auto * params = new Param;
   params->port_num = sockfd;
   params->c_h = client_handler;
+  bool * handles_clients = new bool;
+  *handles_clients=true;
+  params->handles_clients = handles_clients;
   pthread_t t1;
   std::cout<<"before thread"<<std::endl;
   pthread_create(&t1, nullptr,OpenClientsSockets,(void*) params);
-  while (true) {
-
+  while (*handles_clients) {
   }
+  pthread_join(t1,NULL);
+  delete (handles_clients);
 }
