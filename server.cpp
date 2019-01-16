@@ -17,12 +17,14 @@ struct Param {
   ClientHandler * c_h;
   int port_num;
   bool * handles_clients;
+  std::mutex* thread_mutex;
 };
 
 struct ParamClient {
   ClientHandler * c_h;
   int socket_num;
   bool * is_open;
+  std::mutex* thread_mutex;
 };
 void* ClientSocket(void *param){
   std::cout<<"in client socket"<<std::endl;
@@ -31,7 +33,9 @@ void* ClientSocket(void *param){
   auto c_h = params->c_h;
   c_h->handelClient(socket_num);
   std::cout<<"after call handle"<<std::endl;
+  params->thread_mutex->lock();
   *params->is_open = false;
+  params->thread_mutex->unlock();
   //int newsockfd =  *((int*) sockfd);
   //std::cout<<"in socket :" + std::to_string(*n)<< std::endl;
   //char buffer[BUFFER_SIZE];
@@ -97,24 +101,32 @@ void* OpenClientsSockets(void *param) {
     param_client->is_open = thread_open;
     param_client->socket_num = newsockfd;
     param_client->c_h = params->c_h;
+    param_client->thread_mutex = params->thread_mutex;
     //std::cout << params->port_num << std::endl;
     pthread_create(t, nullptr, ClientSocket, (void *) param_client);
     //}
     //}
   }
-  bool threads_finished = false;
+
+  std::cout<<"after sleep"<<std::endl;
+
+  //bool threads_finished = false;
+  int num_of_closed_thread=0;
+  int size = is_thread_open.size();
   while (true) {
-    for (auto thread : is_thread_open) {
-      if(thread) {
-        threads_finished = false;
-        break;
-      } else {
-        threads_finished = true;
+      for (auto thread : is_thread_open) {
+          params->thread_mutex->lock();
+          if(!*thread) {
+            num_of_closed_thread++;
+          }
+          params->thread_mutex->unlock();
       }
-    }
-    if(threads_finished) {
-      break;
-    }
+      if (num_of_closed_thread == size) {
+          break;
+      }
+      num_of_closed_thread=0;
+  }
+  std::cout << "after thread is closed check finish"<<std::endl;
 
     for(auto socket_num : sockets) {
       close(socket_num);
@@ -127,8 +139,10 @@ void* OpenClientsSockets(void *param) {
     for(auto is_open :is_thread_open) {
       delete (is_open);
     }
+    params->thread_mutex->lock();
     *params->handles_clients = false;
-  }
+    params->thread_mutex->unlock();
+
   //std::cout<<"in open clients sockets"<<std::endl;
 
 }
@@ -166,9 +180,16 @@ void MyParallelServer::open(int port ,ClientHandler* client_handler) {
   *handles_clients=true;
   params->handles_clients = handles_clients;
   pthread_t t1;
+  std::mutex thread_mutex;
   std::cout<<"before thread"<<std::endl;
+  params->thread_mutex = &thread_mutex;
   pthread_create(&t1, nullptr,OpenClientsSockets,(void*) params);
-  while (*handles_clients) {
+  while (true) {
+    thread_mutex.lock();
+    if(!*handles_clients) {
+      break;
+    }
+    thread_mutex.unlock();
   }
   pthread_join(t1,NULL);
   delete (handles_clients);

@@ -184,8 +184,6 @@ template <class Solution ,class Problem >
           //this->still_handle= false;
       }
 
-
-
 };
 
 
