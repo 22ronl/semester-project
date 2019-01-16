@@ -14,29 +14,29 @@ public:
   virtual Solution getSolution(Problem)=0;
 };
 
-template <class E ,class T>class FileCacheManager:public CacheManager<Solution<E>*,Searchable<T>*> {
+ class FileCacheManager:public CacheManager<std::string,std::string> {
  private:
-  std::map<Searchable<T>*,Solution<E>*> solution_map;
+  std::map<std::string,std::string> solution_map;
   std::mutex mutex_solution_map;
  public:
-  bool isProblemExist(Searchable<T> * searchable) {
+  bool isProblemExist(std::string problem) {
     this->mutex_solution_map.lock();
-    bool b= (bool)solution_map.count(searchable);
+    bool b= (bool)solution_map.count(problem);
     this->mutex_solution_map.unlock();
     return b;
   }
-  void save(Searchable<T> * searchable,Solution<E>* solution) {
+  void save(std::string problem ,std::string solution) {
     this->mutex_solution_map.lock();
-    this->solution_map[searchable] = solution;
+    this->solution_map[problem] = solution;
     this->mutex_solution_map.unlock();
   }
-  Solution<E>* getSolution(Searchable<T> * searchable) {
-    Solution<E>* s;
+  std::string getSolution(std::string problem) {
+    std::string solution;
     this->mutex_solution_map.lock();
-    if(this->isProblemExist(searchable)) {
-      s = this->solution_map[searchable];
+    if(this->isProblemExist(problem)) {
+      solution = this->solution_map[problem];
       this->mutex_solution_map.unlock();
-      return s;
+      return solution;
     } else {
       this->mutex_solution_map.unlock();
       return nullptr;

@@ -163,27 +163,34 @@ template <class Solution ,class Problem >
         path = path.substr(0,path.length()-PATH_END_SIZE);
         return path;
       }
-      void handelClient(int sock_number){
-          //std::cout<<"in handle c";
-          // remmber to check if problem exists
-          std::string input = this->readClient(sock_number);
-          std::string path;
+      void handelClient(int sock_number) {
+        //std::cout<<"in handle c";
+        // remmber to check if problem exists
+        std::string input = this->readClient(sock_number);
+        std::string path;
+        std::string backup_input = input;
+        if (!this->cache_manager->isProblemExist(input)) {
           MatrixProblem *m = this->createProblem(input);
           //send(sock_number,input.c_str(),input.size(),0);
           Solution solution = this->solver->solve(m);
-          std::cout<<"solved";
-          this->cache_manager->save(m,solution);
-         std::vector<State<std::pair<int,int>>*> solution_v =  solution->getSolution();
-         path =this->getStringPath(solution_v);
-         //std::string path;
-         //for(auto node : solution_v) {
+          std::cout << "solved";
+          this->cache_manager->save(m, solution);
+          std::vector<State<std::pair<int, int>> *> solution_v = solution->getSolution();
+          path = this->getStringPath(solution_v);
+          this->cache_manager->save(backup_input,path);
+          //std::string path;
+          //for(auto node : solution_v) {
           // path += " ";
-           //path+= std::to_string(node->getCost());
-        // }
-          send(sock_number,path.c_str(),path.size(),0);
+          //path+= std::to_string(node->getCost());
+          // }
+          //
           //this->still_handle= false;
-      }
 
+        } else {
+          path = this->cache_manager->getSolution(input);
+        }
+        send(sock_number, path.c_str(), path.size(), 0);
+      }
 };
 
 

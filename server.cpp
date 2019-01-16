@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <fcntl.h>
+
 #define TIME_OUT 10
 #define BUFFER_SIZE 1024
 struct Param {
@@ -188,6 +189,7 @@ void MyParallelServer::open(int port ,ClientHandler* client_handler) {
   while (true) {
     thread_mutex.lock();
     if(*handles_clients) {
+      std::cout<<"break loop in open"<<std::endl;
       break;
     }
     thread_mutex.unlock();
